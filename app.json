@@ -9,5 +9,10 @@
     "env": {
         "GATEWAY_MERCHANT_ID": "Paste your gateway merchant ID here",
         "GATEWAY_API_PASSWORD": "Paste your gateway API password here"
-    }
+    },
+    "buildpacks": [
+        {
+            "url": "heroku/php"
+        }
+    ]
 }
