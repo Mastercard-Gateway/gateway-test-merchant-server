@@ -1,0 +1,13 @@
+{
+    "name": "MPGS PHP Server",
+    "description": "Sample PHP based server application for processing MPGS payments",
+    "keywords": [
+        "Mastercard",
+        "Gateway"
+    ],
+    "website": "http://gateway.mastercard.com",
+    "env": {
+        "GATEWAY_MERCHANT_ID": "Paste your gateway merchant ID here",
+        "GATEWAY_API_PASSWORD": "Paste your gateway API password here"
+    }
+}
