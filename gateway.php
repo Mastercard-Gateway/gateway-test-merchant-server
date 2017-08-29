@@ -27,13 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 // POST requests will process a payment for an updated session
 else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $orderId = 'O' . rand();
-    $txnId = 'T' . rand();
+    $orderId = 'O-' . rand();
+    $txnId = 'T-' . rand();
     $url = $gatewayUrl . '/order/' . $orderId . '/transaction/' . $txnId;
 
     $input = json_decode(file_get_contents('php://input'), true);
     $data = array(
-        'apiOperation' => 'PAY',
+        'apiOperation' => 'AUTHORIZE',
         'order' => array(
             'amount' => $input['amount'],
             'currency' => $input['currency']
