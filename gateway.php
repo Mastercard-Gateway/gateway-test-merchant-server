@@ -22,12 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $context = stream_context_create($options);
 
     $result = file_get_contents($url, false, $context);
-    var_dump($result);
+    print_r($result);
     exit;
 }
 else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $orderId = '123';
-    $txnId = '456';
+    $orderId = 'O' . rand();
+    $txnId = 'T' . rand();
     $url = $gatewayUrl . '/order/' . $orderId . '/transaction/' . $txnId;
 
     $input = json_decode(file_get_contents('php://input'), true);
@@ -53,7 +53,7 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     var_dump($context);
 
     $result = file_get_contents($url, false, $context);
-    var_dump($result);
+    print_r($result);
     exit;
 }
 
