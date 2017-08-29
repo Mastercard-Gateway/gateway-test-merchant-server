@@ -10,7 +10,7 @@ $gatewayUrl = 'https://test-gateway.mastercard.com/api/rest/version/43/merchant/
 
 $options = array(
     'http' => array(
-        'header'  => "Content-type: application/x-www-form-urlencoded\r\nAuthorization: Basic " . base64_encode("merchant.$merchantId:$password") . "\r\n"
+        'header'  => "Content-type: application/json\r\nAuthorization: Basic " . base64_encode("merchant.$merchantId:$password") . "\r\n"
     )
 );
 
