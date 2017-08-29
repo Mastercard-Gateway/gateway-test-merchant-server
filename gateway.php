@@ -26,10 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     exit;
 }
 else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    var_dump($HTTP_RAW_POST_DATA);
-    exit;
-    
-    $input = json_decode(file_get_contents('php://input'));
+    $input = json_decode($HTTP_RAW_POST_DATA);
     $data = array(
         'order' => array(
             'amount' => $input['amount'],
