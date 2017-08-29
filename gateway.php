@@ -16,16 +16,21 @@ $options = array(
 
 // GET requests will create a new session with the gateway
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $url = $gatewayUrl . '/session';
+
     $options['http']['method'] = 'POST';
     $context = stream_context_create($options);
 
-    $url = $gatewayUrl . '/session';
     $result = file_get_contents($url, false, $context);
 
     var_dump($result);
     exit;
 }
 else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $orderId = '123';
+    $txnId = '456';
+    $url = $gatewayUrl . '/order/' . $orderId . '/transaction/' . $txnId;
+
     $input = json_decode(file_get_contents('php://input'), true);
     $data = array(
         'apiOperation' => 'PAY',
@@ -43,10 +48,8 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $options['http']['method'] = 'PUT';
     $options['http']['content'] = json_encode($data);
+    $context = stream_context_create($options);
 
-    $orderId = '123';
-    $txnId = '456';
-    $url = $gatewayUrl . '/order/' . $orderId . '/transaction/' . $txnId;
     $result = file_get_contents($url, false, $context);
 
     var_dump($result);
