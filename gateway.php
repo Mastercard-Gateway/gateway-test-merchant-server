@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $context = stream_context_create($options);
 
     $result = file_get_contents($url, false, $context);
-
     var_dump($result);
     exit;
 }
@@ -48,10 +47,12 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $options['http']['method'] = 'PUT';
     $options['http']['content'] = json_encode($data);
+    var_dump($options);
+
     $context = stream_context_create($options);
+    var_dump($context);
 
     $result = file_get_contents($url, false, $context);
-
     var_dump($result);
     exit;
 }
