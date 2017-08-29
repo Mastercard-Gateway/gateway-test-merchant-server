@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
     $data = array(
+        'apiOperation' => 'PAY',
         'order' => array(
             'amount' => $input['amount'],
             'currency' => $input['currency']
