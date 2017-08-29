@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     print_r($result);
     exit;
 }
+// POST requests will process a payment for an updated session
 else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $orderId = 'O' . rand();
     $txnId = 'T' . rand();
@@ -47,10 +48,7 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $options['http']['method'] = 'PUT';
     $options['http']['content'] = json_encode($data);
-    var_dump($options);
-
     $context = stream_context_create($options);
-    var_dump($context);
 
     $result = file_get_contents($url, false, $context);
     print_r($result);
