@@ -40,12 +40,12 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         )
     );
 
-    // $options['http']['method'] = 'PUT';
-    // $options['http']['content'] = json_encode($data);
-    //
-    // $orderId = uniqid("", true);
-    // $txnId = uniqid("", true);
-    // $url = $gatewayUrl . '/order/' . $orderId . '/transaction/' . $txnId;
+    $options['http']['method'] = 'PUT';
+    $options['http']['content'] = json_encode($data);
+
+    $orderId = uniqid("", true);
+    $txnId = uniqid("", true);
+    $url = $gatewayUrl . '/order/' . $orderId . '/transaction/' . $txnId;
     // $result = file_get_contents($url, false, $context);
     //
     // var_dump($result);
