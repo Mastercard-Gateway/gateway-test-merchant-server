@@ -28,13 +28,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode($HTTP_RAW_POST_DATA);
     $data = array(
-        'order' => array(
-            'amount' => $input['amount'],
-            'currency' => $input['currency']
-        ),
-        'session' => array(
-            'id' => $input['session_id']
-        ),
+        // 'order' => array(
+        //     'amount' => $input['amount'],
+        //     'currency' => $input['currency']
+        // ),
+        // 'session' => array(
+        //     'id' => $input['session_id']
+        // ),
         'sourceOfFunds' => array(
             'type' => 'CARD'
         )
