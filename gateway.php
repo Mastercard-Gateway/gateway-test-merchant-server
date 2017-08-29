@@ -26,16 +26,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     exit;
 }
 else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $input = json_decode($HTTP_RAW_POST_DATA);
-    var_dump($input);
+    $input = json_decode(file_get_contents('php://input'), true);
     $data = array(
-        // 'order' => array(
-        //     'amount' => $input['amount'],
-        //     'currency' => $input['currency']
-        // ),
-        // 'session' => array(
-        //     'id' => $input['session_id']
-        // ),
+        'order' => array(
+            'amount' => $input['amount'],
+            'currency' => $input['currency']
+        ),
+        'session' => array(
+            'id' => $input['session_id']
+        ),
         'sourceOfFunds' => array(
             'type' => 'CARD'
         )
@@ -47,9 +46,9 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $orderId = uniqid("", true);
     $txnId = uniqid("", true);
     $url = $gatewayUrl . '/order/' . $orderId . '/transaction/' . $txnId;
-    // $result = file_get_contents($url, false, $context);
-    //
-    // var_dump($result);
+    $result = file_get_contents($url, false, $context);
+    
+    var_dump($result);
     exit;
 }
 
