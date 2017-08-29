@@ -8,20 +8,50 @@ $password = getenv('GATEWAY_API_PASSWORD');
 
 $gatewayUrl = 'https://test-gateway.mastercard.com/api/rest/version/43/merchant/' . $merchantId;
 
+$options = array(
+    'http' => array(
+        'header'  => "Content-type: application/x-www-form-urlencoded\r\nAuthorization: Basic " . base64_encode("merchant.$merchantId:$password") . "\r\n"
+    )
+);
+
 // GET requests will create a new session with the gateway
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $url = $gatewayUrl . '/session';
-    $options = array(
-        'http' => array(
-            'header'  => "Content-type: application/x-www-form-urlencoded\r\nAuthorization: Basic " . base64_encode("merchant.$merchantId:$password") . "\r\n",
-            'method'  => 'POST',
-            'content' => ""
-        )
-    );
+    $options['http']['method'] = 'POST';
     $context = stream_context_create($options);
+
+    $url = $gatewayUrl . '/session';
     $result = file_get_contents($url, false, $context);
 
     var_dump($result);
+    exit;
 }
+else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $data = array(
+        'order' => array(
+            'amount' => $_POST['amount'],
+            'currency' => $_POST['currency']
+        ),
+        'session' => array(
+            'id' => $_POST['session_id']
+        ),
+        'sourceOfFunds' => array(
+            'type' => 'CARD'
+        )
+    );
+
+    $options['http']['method'] = 'PUT';
+    $options['http']['content'] = json_encode($data);
+
+    $orderId = uniqid("", true);
+    $txnId = uniqid("", true);
+    $url = $gatewayUrl . '/order/' . $orderId . '/transaction/' . $txnId;
+    $result = file_get_contents($url, false, $context);
+
+    var_dump($result);
+    exit;
+}
+
+http_response_code(400);
+echo 'No action matching this request';
 
 ?>
