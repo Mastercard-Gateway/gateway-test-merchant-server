@@ -1,6 +1,5 @@
 <?php
 
-header('Content-Type: application/json');
 error_reporting('all');
 
 $merchantId = getenv('GATEWAY_MERCHANT_ID');
@@ -27,6 +26,7 @@ function doRequest($url, $method, $data = null, $headers = null) {
     $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     curl_close($curl);
 
+    header('Content-Type: application/json');
     http_response_code($code);
     print_r($response);
 }
