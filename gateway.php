@@ -8,22 +8,36 @@ $password = getenv('GATEWAY_API_PASSWORD');
 
 $gatewayUrl = 'https://test-gateway.mastercard.com/api/rest/version/43/merchant/' . $merchantId;
 
-$options = array(
-    'http' => array(
-        'header'  => "Content-type: application/json\r\nAuthorization: Basic " . base64_encode("merchant.$merchantId:$password") . "\r\n"
-    )
+// $options = array(
+//     'http' => array(
+//         'header'  => "Content-type: application/json\r\nAuthorization: Basic " . base64_encode("merchant.$merchantId:$password") . "\r\n"
+//     )
+// );
+
+$headers = array(
+    'Content-type: application/json',
+    'Authorization: Basic ' . base64_encode("merchant.$merchantId:$password")
 );
+
+$curl = curl_init();
+curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
 
 // GET requests will create a new session with the gateway
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $url = $gatewayUrl . '/session';
 
-    $options['http']['method'] = 'POST';
-    $context = stream_context_create($options);
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
 
-    $result = file_get_contents($url, false, $context);
+    $response = curl_exec($curl);
     print_r($result);
     exit;
+
+    // $result = file_get_contents($url, false, $context);
+    // print_r($result);
+    // exit;
 }
 // POST requests will process a payment for an updated session
 else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -46,13 +60,21 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         )
     );
 
-    $options['http']['method'] = 'PUT';
-    $options['http']['content'] = json_encode($data);
-    $context = stream_context_create($options);
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
 
-    $result = file_get_contents($url, false, $context);
+    $response = curl_exec($curl);
     print_r($result);
     exit;
+    //
+    // $options['http']['method'] = 'PUT';
+    // $options['http']['content'] = json_encode($data);
+    // $context = stream_context_create($options);
+    //
+    // $result = file_get_contents($url, false, $context);
+    // print_r($result);
+    // exit;
 }
 
 http_response_code(400);
