@@ -24,17 +24,16 @@ function doRequest($url, $method, $data = null, $headers = null) {
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
     }
     $response = curl_exec($curl);
-    $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     curl_close($curl);
 
-    header('Content-Type: application/json');
-    http_response_code($code);
-    print_r($response);
+    return $response;
 }
 
 // GET requests will create a new session with the gateway
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    doRequest($gatewayUrl . '/session', 'POST', null, $headers);
+    $response = doRequest($gatewayUrl . '/session', 'POST', null, $headers);
+    header('Content-Type: application/json');
+    print_r($response);
 }
 // POST requests will process a payment for an updated session
 else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -57,7 +56,10 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         )
     );
 
-    doRequest($url, 'PUT', json_encode($data), $headers);
+    $response = doRequest($url, 'PUT', json_encode($data), $headers);
+
+    header('Content-Type: application/json');
+    print_r($response);
 }
 else {
     http_response_code(400);
