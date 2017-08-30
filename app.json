@@ -1,5 +1,5 @@
 {
-    "name": "Mastercard Gateway Sample Merchant Server",
+    "name": "Gateway Merchant Server",
     "description": "Sample PHP application for processing mobile SDK transactions on the Mastercard Gateway",
     "keywords": [
         "Mastercard",
