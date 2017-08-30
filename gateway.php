@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
 
     $response = curl_exec($curl);
-    print_r($result);
+    print_r($response);
     exit;
 
     // $result = file_get_contents($url, false, $context);
@@ -65,7 +65,7 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
 
     $response = curl_exec($curl);
-    print_r($result);
+    print_r($response);
     exit;
     //
     // $options['http']['method'] = 'PUT';
