@@ -1,14 +1,25 @@
 {
-    "name": "MPGS PHP Server",
-    "description": "Sample PHP based server application for processing MPGS payments",
+    "name": "Mastercard Gateway Sample Merchant Server",
+    "description": "Sample PHP application for processing mobile SDK transactions on the Mastercard Gateway",
     "keywords": [
         "Mastercard",
         "Gateway"
     ],
     "website": "http://gateway.mastercard.com",
     "env": {
-        "GATEWAY_MERCHANT_ID": "Paste your gateway merchant ID here",
-        "GATEWAY_API_PASSWORD": "Paste your gateway API password here"
+        "GATEWAY_MERCHANT_ID": {
+            "required": true,
+            "description": "Your gateway merchant ID"
+        },
+        "GATEWAY_API_PASSWORD": {
+            "required": true,
+            "description": "Your gateway API password"
+        },
+        "GATEWAY_API_VERSION": {
+            "required": true,
+            "description": "The gateway API version to target",
+            "value": "43"
+        }
     },
     "buildpacks": [
         {
