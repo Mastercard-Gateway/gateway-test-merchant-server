@@ -4,9 +4,9 @@ error_reporting('all');
 
 $merchantId = getenv('GATEWAY_MERCHANT_ID');
 $password = getenv('GATEWAY_API_PASSWORD');
-$apiVersion = getenv('GATEWAY_API_VERSION')
+$apiVersion = getenv('GATEWAY_API_VERSION');
 
-$gatewayUrl = "https://test-gateway.mastercard.com/api/rest/version/${apiVersion}/merchant/${merchantId}";
+$gatewayUrl = 'https://test-gateway.mastercard.com/api/rest/version/' . $apiVersion . '/merchant/' . $merchantId;
 
 $headers = array(
     'Content-type: application/json',
