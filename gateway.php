@@ -37,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 // POST requests will process a payment for an updated session
 else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $orderId = 'TEST-' . bin2hex(random_bytes(5));
-    $txnId = 'TEST-' . bin2hex(random_bytes(5));
+    $orderId = 'TEST-' . bin2hex(openssl_random_pseudo_bytes(5));
+    $txnId = 'TEST-' . bin2hex(openssl_random_pseudo_bytes(5));
     $url = $gatewayUrl . '/order/' . $orderId . '/transaction/' . $txnId;
 
     $input = json_decode(file_get_contents('php://input'), true);
