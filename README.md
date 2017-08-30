@@ -4,7 +4,7 @@ This is an sample application to help developers start building mobile applicati
 
 ## Steps for running
 
-* Register with [Heroku](https://www.heroku.com) (if you haven't done so already)
-* Register with [Simplify Commerce](https://www.simplify.com/commerce/login/signup) and you will need API Keys (Under Settings/API Keys) in the next step
+* Obtain a test account with [Mastercard Gateway](http://www.mastercard.com/gateway/)
+* Register with [Heroku](https://www.heroku.com)
 * Click the 'Deploy to Heroku' button above
-* Configure the deployed app with your TEST merchant ID and API password
+* Configure the deployed app with a TEST merchant ID and API password
