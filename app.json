@@ -5,15 +5,16 @@
         "Mastercard",
         "Gateway"
     ],
-    "website": "http://gateway.mastercard.com",
+    "repository": "https://github.com/Mastercard/gateway-merchant-sample-php",
+    "website": "http://www.mastercard.com/gateway",
     "env": {
         "GATEWAY_MERCHANT_ID": {
             "required": true,
-            "description": "Your gateway merchant ID"
+            "description": "Your TEST gateway merchant ID"
         },
         "GATEWAY_API_PASSWORD": {
             "required": true,
-            "description": "Your gateway API password"
+            "description": "Your TEST gateway API password"
         },
         "GATEWAY_API_VERSION": {
             "required": true,
