@@ -8,36 +8,32 @@ $password = getenv('GATEWAY_API_PASSWORD');
 
 $gatewayUrl = 'https://test-gateway.mastercard.com/api/rest/version/43/merchant/' . $merchantId;
 
-// $options = array(
-//     'http' => array(
-//         'header'  => "Content-type: application/json\r\nAuthorization: Basic " . base64_encode("merchant.$merchantId:$password") . "\r\n"
-//     )
-// );
-
 $headers = array(
     'Content-type: application/json',
     'Authorization: Basic ' . base64_encode("merchant.$merchantId:$password")
 );
 
-$curl = curl_init();
-curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+function doRequest($url, $method, $data = null, $headers = null) {
+    $curl = curl_init($url);
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    if ($data) {
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+    }
+    if ($headers) {
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+    }
+    $response = curl_exec($curl);
+    $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    curl_close($curl);
 
+    http_response_code($code);
+    print_r($response);
+}
 
 // GET requests will create a new session with the gateway
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $url = $gatewayUrl . '/session';
-
-    curl_setopt($curl, CURLOPT_URL, $url);
-    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
-
-    $response = curl_exec($curl);
-    print_r($response);
-    exit;
-
-    // $result = file_get_contents($url, false, $context);
-    // print_r($result);
-    // exit;
+    doRequest($gatewayUrl . '/session', 'POST', null, $headers);
 }
 // POST requests will process a payment for an updated session
 else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -60,24 +56,11 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         )
     );
 
-    curl_setopt($curl, CURLOPT_URL, $url);
-    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
-    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
-
-    $response = curl_exec($curl);
-    print_r($response);
-    exit;
-    //
-    // $options['http']['method'] = 'PUT';
-    // $options['http']['content'] = json_encode($data);
-    // $context = stream_context_create($options);
-    //
-    // $result = file_get_contents($url, false, $context);
-    // print_r($result);
-    // exit;
+    doRequest($url, 'PUT', json_encode($data), $headers);
 }
-
-http_response_code(400);
-echo 'No action matching this request';
+else {
+    http_response_code(400);
+    echo 'No action matching this request';
+}
 
 ?>
