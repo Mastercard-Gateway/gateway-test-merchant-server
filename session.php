@@ -57,13 +57,16 @@ function doRequest($url, $method, $data = null, $headers = null) {
 }
 
 // GET requests will create a new session with the gateway
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = doRequest($gatewayUrl . '/session', 'POST', null, $headers);
+
     header('Content-Type: application/json');
     print_r($response);
+    exit;
 }
+
 // POST requests will process a payment for an updated session
-else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $orderId = 'TEST-' . bin2hex(openssl_random_pseudo_bytes(5));
     $txnId = 'TEST-' . bin2hex(openssl_random_pseudo_bytes(5));
     $url = $gatewayUrl . '/order/' . $orderId . '/transaction/' . $txnId;
@@ -87,10 +90,24 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     header('Content-Type: application/json');
     print_r($response);
+    exit;
 }
-else {
-    http_response_code(400);
-    echo 'No action matching this request';
-}
-
 ?>
+
+<html>
+    <body>
+        <h1>Create / Complete Checkout Session</h1>
+        <h3>Create Session</h3>
+        <p>...Description...</p>
+        <pre>
+            POST
+            ...Request params...
+        </pre>
+        <h3>Complete Session</h3>
+        <p>...Description...</p>
+        <pre>
+            PUT
+            ...Request params...
+        </pre>
+    </body>
+</html>
