@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
             'currency' => $input['currency']
         ),
         'session' => array(
-            'id' => $input['session_id']
+            'id' => $input['sessionId']
         ),
         'sourceOfFunds' => array(
             'type' => 'CARD'
