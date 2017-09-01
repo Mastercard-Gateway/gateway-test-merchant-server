@@ -19,7 +19,7 @@
         "GATEWAY_API_VERSION": {
             "required": true,
             "description": "The gateway API version to target",
-            "value": "43"
+            "value": "44"
         }
     },
     "buildpacks": [
