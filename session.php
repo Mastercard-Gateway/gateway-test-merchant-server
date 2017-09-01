@@ -83,6 +83,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         ),
         'sourceOfFunds' => array(
             'type' => 'CARD'
+        ),
+        'transaction' => array(
+            'frequency' => 'SINGLE'
         )
     );
 
