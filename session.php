@@ -95,22 +95,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     print_r($response);
     exit;
 }
+
+
+$url = "http".(!empty($_SERVER['HTTPS'])?"s":"")."://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+
 ?>
 
 <html>
     <body>
         <h1>Create / Complete Checkout Session</h1>
         <h3>Create Session</h3>
-        <p>...Description...</p>
+        <p>Creates a Session with the gateway, and returns relevant data.</p>
         <pre>
-            POST
-            ...Request params...
+            POST <?php echo $url; ?>
         </pre>
         <h3>Complete Session</h3>
-        <p>...Description...</p>
+        <p>Completes a payment after a session has been updated with card holder information</p>
         <pre>
-            PUT
-            ...Request params...
+            PUT <?php echo $url; ?>
+            Content-Type: application/json
+            Sample Payload:
+                {
+                    "amount": "1.00",
+                    "currency": "USD",
+                    "sessionId": "SESS12345678900000"
+                }
         </pre>
     </body>
 </html>
