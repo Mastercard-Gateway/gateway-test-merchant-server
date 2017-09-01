@@ -107,6 +107,9 @@ $url = "http".(!empty($_SERVER['HTTPS'])?"s":"")."://".$_SERVER['SERVER_NAME'].$
 ?>
 
 <html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    </head>
     <body>
         <h1>Create / Complete Checkout Session</h1>
 
@@ -114,59 +117,51 @@ $url = "http".(!empty($_SERVER['HTTPS'])?"s":"")."://".$_SERVER['SERVER_NAME'].$
         <p>Creates a Session with the gateway, and returns relevant data.</p>
 
         <h4>Request</h4>
-        <pre>
-POST <?php echo $url; ?>
-        </pre>
+        <pre><code>POST <?php echo $url; ?></code></pre>
 
         <h4>Response</h4>
         <p>Refer to gateway API docs for full response body documentation: <a href="https://test-gateway.mastercard.com/api/documentation/apiDocumentation/rest-json/version/latest/operation/Session%3a%20Create%20Session.html">Session: Create Session</a></p>
-        <pre>
-Sample Response:
-    {
-        "merchant": "<?php echo $merchantId; ?>",
-        "result": "SUCCESS",
-        "session": {
-            "id": "SESSION00012345678900000",
-            "updateStatus": "NO_UPDATE",
-            "version": "abcdef0123"
-        }
+        <pre><code>Sample Response:
+{
+    "merchant": "<?php echo $merchantId; ?>",
+    "result": "SUCCESS",
+    "session": {
+        "id": "SESSION00012345678900000",
+        "updateStatus": "NO_UPDATE",
+        "version": "abcdef0123"
     }
-        </pre>
+}</code></pre>
 
         <h3>Complete Session</h3>
         <p>Completes a payment after a session has been updated with card holder information</p>
 
         <h4>Request</h4>
-        <pre>
-PUT <?php echo $url; ?>
+        <pre><code>PUT <?php echo $url; ?>
 
 Content-Type: application/json
 Sample Payload:
-    {
-        "sessionId": "SESSION00012345678900000",
-        "amount": "1.00",
-        "currency": "USD",
-        "orderId": "O-123456", // optional
-        "transactionId": "T-123456" // optional
-    }
-        </pre>
+{
+    "sessionId": "SESSION00012345678900000",
+    "amount": "1.00",
+    "currency": "USD",
+    "orderId": "O-123456", // optional
+    "transactionId": "T-123456" // optional
+}</code></pre>
 
         <h4>Response</h4>
         <p>Refer to gateway API docs for full response body documentation: <a href="https://test-gateway.mastercard.com/api/documentation/apiDocumentation/rest-json/version/latest/operation/Transaction%3a%20%20Pay.html">Transaction: Pay</a></p>
-        <pre>
-Sample Response:
-    {
-        "authorizationResponse": { ... },
-        "gatewayEntryPoint": "WEB_SERVICES_API",
-        "merchant": "<?php echo $merchantId; ?>",
-        "order": { ... },
-        "response": { ... },
-        "result": "SUCCESS",
-        "sourceOfFunds": { ... },
-        "timeOfRecord": "2017-01-01T00:00:00.000Z",
-        "transaction": { ... },
-        "version": "<?php echo $apiVersion; ?>"
-    }
-        </pre>
+        <pre><code>Sample Response:
+{
+    "authorizationResponse": { ... },
+    "gatewayEntryPoint": "WEB_SERVICES_API",
+    "merchant": "<?php echo $merchantId; ?>",
+    "order": { ... },
+    "response": { ... },
+    "result": "SUCCESS",
+    "sourceOfFunds": { ... },
+    "timeOfRecord": "2017-01-01T00:00:00.000Z",
+    "transaction": { ... },
+    "version": "<?php echo $apiVersion; ?>"
+}</code></pre>
     </body>
 </html>
