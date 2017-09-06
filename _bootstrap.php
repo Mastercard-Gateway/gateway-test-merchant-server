@@ -94,5 +94,6 @@ function parseJsonPayload() {
     if (json_last_error() !== JSON_ERROR_NONE) {
         error(400, 'Could not parse json payload');
     }
+    var_dump($data);
     return $data;
 }
