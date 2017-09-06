@@ -64,10 +64,10 @@ function doRequest($url, $method, $data = null, $headers = null) {
     $curl = curl_init($url);
     curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    if ($data) {
+    if (!empty($data)) {
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
     }
-    if ($headers) {
+    if (!empty($headers)) {
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
     }
     $response = curl_exec($curl);
