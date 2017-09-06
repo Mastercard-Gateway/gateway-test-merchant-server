@@ -35,7 +35,7 @@ if (intercept('PUT')) {
     $orderId = requiredQueryParam('order');
     $txnId = requiredQueryParam('transaction');
     $path = '/order/' . $orderId . '/transaction/' . $txnId;
-    
+
     proxyCall($path);
 }
 
@@ -56,7 +56,7 @@ if (intercept('PUT')) {
 
         <h3>PAY Operation</h3>
         <h5>Sample Request</h5>
-        <pre><code>PUT <?php echo htmlentities($pageUrl . '?order={order-id}&transaction={txnId}'); ?>
+        <pre><code>PUT <?php echo htmlentities($pageUrl . '?order={orderId}&transaction={txnId}'); ?>
 
 Content-Type: application/json
 Payload:
