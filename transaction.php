@@ -29,25 +29,14 @@
 
 include '_bootstrap.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-    // get order and txn ids from query string
-    parse_str($_SERVER['QUERY_STRING'], $query);
-    requiredQueryParam('order', $query);
-    requiredQueryParam('transaction', $query);
-
-    // build endpoint url
-    $url = $gatewayUrl . '/order/' . $query['order'] . '/transaction/' . $query['transaction'];
-
-    // get json payload from request
-    $data = parseJsonPayload();
-
-    // do request
-    $response = doRequest($url, 'PUT', json_encode($data), $headers);
-
-    // output response
-    header('Content-Type: application/json');
-    print_r($response);
-    exit;
+// proxy PUT requests
+if (intercept('PUT')) {
+    // build path
+    $orderId = requiredQueryParam('order');
+    $txnId = requiredQueryParam('transaction');
+    $path = '/order/' . $orderId . '/transaction/' . $txnId;
+    
+    proxyCall($path);
 }
 
 ?>
@@ -57,12 +46,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
         <style>
             body {
-                padding: 3rem;
+                padding: 2rem;
             }
         </style>
     </head>
     <body>
-        <h1>Transaction</h1>
-        <h3>Update a Transaction</h3>
+        <h1>Transaction API</h1>
+        <p>For more information, see:<br/><a href="<?php echo $docsUrl; ?>" target="_blank"><?php echo $docsUrl; ?></a></p>
+
+        <h3>PAY Operation</h3>
+        <h5>Sample Request</h5>
+        <pre><code>PUT <?php echo htmlentities($pageUrl . '?order={order-id}&transaction={txnId}'); ?>
+
+Content-Type: application/json
+Payload:
+{
+    "apiOperation": "PAY",
+    "order": {
+    	"amount": "1.00",
+    	"currency": "USD"
+    },
+    "session": {
+    	"id": "SESSION0002588486932L2266796L57"
+    },
+    "sourceOfFunds": {
+    	"type": "CARD"
+    },
+    "transaction": {
+    	"frequency": "SINGLE"
+    }
+}</code></pre>
+
+        <h5>Response</h5>
+        <pre><code>Content-Type: application/json
+Payload:
+{
+    "authorizationResponse": { ... },
+    "gatewayEntryPoint": "WEB_SERVICES_API",
+    "merchant": "<?php echo $merchantId; ?>",
+    "order": { ... },
+    "response": { ... },
+    "result": "SUCCESS",
+    "sourceOfFunds": { ... },
+    "timeOfRecord": "2017-01-01T00:00:00.000Z",
+    "transaction": { ... },
+    "version": "<?php echo $apiVersion; ?>"
+}</code></pre>
     </body>
 </html>

@@ -53,12 +53,23 @@ if (strcasecmp($region, 'North America') == 0) {
 // build api endpoint url
 $gatewayUrl = 'https://' . $regionPrefix . '-gateway.mastercard.com/api/rest/version/' . $apiVersion . '/merchant/' . $merchantId;
 
+// parae query string
+$query = array();
+parse_str($_SERVER['QUERY_STRING'], $query);
+
+// build auth headers
 $headers = array(
     'Content-type: application/json',
     'Authorization: Basic ' . base64_encode("merchant.$merchantId:$password")
 );
 
+// construct page url
 $pageUrl = "http".(!empty($_SERVER['HTTPS'])?"s":"")."://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+$docsUrl = "https://$regionPrefix-gateway.mastercard.com/api/documentation/apiDocumentation/rest-json/version/latest/api.html";
+
+function intercept($method) {
+    return strcasecmp($_SERVER['REQUEST_METHOD'], $method) == 0;
+}
 
 function doRequest($url, $method, $data = null, $headers = null) {
     $curl = curl_init($url);
@@ -82,18 +93,43 @@ function error($code, $message) {
     exit;
 }
 
-function requiredQueryParam($param, $query) {
+function requiredQueryParam($param) {
+    global $query;
+
     if (!array_key_exists($param, $query) || empty($query[$param])) {
         error(400, 'Missing required query param: ' . $param);
     }
+
+    return $query[$param];
 }
 
-function parseJsonPayload() {
+function getJsonPayload() {
     $input = file_get_contents('php://input');
-    $data = json_decode($input, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        error(400, 'Could not parse json payload');
+    if (!empty($input)) {
+        json_decode($input);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error(400, 'Could not parse json payload');
+        }
     }
 
-    return $data;
+    return $input;
+}
+
+function outputJsonResponse($response) {
+    header('Content-Type: application/json');
+    print_r($response);
+    exit;
+}
+
+function proxyCall($path) {
+    global $headers, $gatewayUrl;
+
+    // get json payload from request
+    $payload = getJsonPayload();
+
+    // proxy authenticated request
+    $response = doRequest($gatewayUrl . $path, $_SERVER['REQUEST_METHOD'], $payload, $headers);
+
+    // output response
+    outputJsonResponse($response);
 }

@@ -30,53 +30,10 @@
 include '_bootstrap.php';
 
 // proxy POST requests
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // build endpoint url
-    $url = $gatewayUrl . '/session';
+if (intercept('POST')) {
+    $path = '/session';
 
-    // get json payload from request
-    $data = parseJsonPayload();
-    var_dump($data);
-    exit;
-
-    // // do request
-    // $response = doRequest($url, 'POST', json_encode($data), $headers);
-    //
-    // // output response
-    // header('Content-Type: application/json');
-    // print_r($response);
-    // exit;
-}
-
-// proxy PUT requests
-if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-    $orderId = 'TEST-' . bin2hex(openssl_random_pseudo_bytes(5));
-    $txnId = 'TEST-' . bin2hex(openssl_random_pseudo_bytes(5));
-    $url = $gatewayUrl . '/order/' . $orderId . '/transaction/' . $txnId;
-
-    $input = json_decode(file_get_contents('php://input'), true);
-    $data = array(
-        'apiOperation' => 'PAY',
-        'order' => array(
-            'amount' => $input['amount'],
-            'currency' => $input['currency']
-        ),
-        'session' => array(
-            'id' => $input['sessionId']
-        ),
-        'sourceOfFunds' => array(
-            'type' => 'CARD'
-        ),
-        'transaction' => array(
-            'frequency' => 'SINGLE'
-        )
-    );
-
-    $response = doRequest($url, 'PUT', json_encode($data), $headers);
-
-    header('Content-Type: application/json');
-    print_r($response);
-    exit;
+    proxyCall($path);
 }
 
 ?>
@@ -86,22 +43,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
         <style>
             body {
-                padding: 3rem;
+                padding: 2rem;
             }
         </style>
     </head>
     <body>
-        <h1>Create / Complete Checkout Session</h1>
+        <h1>Session API</h1>
+        <p>For more information, see:<br/><a href="<?php echo $docsUrl; ?>" target="_blank"><?php echo $docsUrl; ?></a></p>
 
-        <h3>Create Session</h3>
-        <p>Creates a Session with the gateway, and returns relevant data.</p>
+        <h3>Create Session Operation</h3>
 
-        <h4>Request</h4>
+        <h5>Sample Request</h5>
         <pre><code>POST <?php echo $pageUrl; ?></code></pre>
 
-        <h4>Response</h4>
-        <p>Refer to gateway API docs for full response body documentation: <a href="https://test-gateway.mastercard.com/api/documentation/apiDocumentation/rest-json/version/latest/operation/Session%3a%20Create%20Session.html">Session: Create Session</a></p>
-        <pre><code>Sample Response:
+        <h5>Sample Response</h5>
+        <pre><code>Content-Type: application/json
+Payload:
 {
     "merchant": "<?php echo $merchantId; ?>",
     "result": "SUCCESS",
@@ -110,38 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         "updateStatus": "NO_UPDATE",
         "version": "abcdef0123"
     }
-}</code></pre>
-
-        <h3>Complete Session</h3>
-        <p>Completes a payment after a session has been updated with card holder information</p>
-
-        <h4>Request</h4>
-        <pre><code>PUT <?php echo $pageUrl; ?>
-
-Content-Type: application/json
-Sample Payload:
-{
-    "sessionId": "SESSION00012345678900000",
-    "amount": "1.00",
-    "currency": "USD",
-    "orderId": "O-123456", // optional
-    "transactionId": "T-123456" // optional
-}</code></pre>
-
-        <h4>Response</h4>
-        <p>Refer to gateway API docs for full response body documentation: <a href="https://test-gateway.mastercard.com/api/documentation/apiDocumentation/rest-json/version/latest/operation/Transaction%3a%20%20Pay.html">Transaction: Pay</a></p>
-        <pre><code>Sample Response:
-{
-    "authorizationResponse": { ... },
-    "gatewayEntryPoint": "WEB_SERVICES_API",
-    "merchant": "<?php echo $merchantId; ?>",
-    "order": { ... },
-    "response": { ... },
-    "result": "SUCCESS",
-    "sourceOfFunds": { ... },
-    "timeOfRecord": "2017-01-01T00:00:00.000Z",
-    "transaction": { ... },
-    "version": "<?php echo $apiVersion; ?>"
 }</code></pre>
     </body>
 </html>
