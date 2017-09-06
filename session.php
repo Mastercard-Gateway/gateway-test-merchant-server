@@ -36,14 +36,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // get json payload from request
     $data = parseJsonPayload();
-
-    // do request
-    $response = doRequest($url, 'POST', json_encode($data), $headers);
-
-    // output response
-    header('Content-Type: application/json');
-    print_r($response);
+    var_dump($data);
     exit;
+
+    // // do request
+    // $response = doRequest($url, 'POST', json_encode($data), $headers);
+    //
+    // // output response
+    // header('Content-Type: application/json');
+    // print_r($response);
+    // exit;
 }
 
 // proxy PUT requests
