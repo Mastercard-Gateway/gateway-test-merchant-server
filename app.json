@@ -10,15 +10,20 @@
     "env": {
         "GATEWAY_MERCHANT_ID": {
             "required": true,
-            "description": "Your TEST gateway merchant ID"
+            "description": "Your Gateway merchant ID"
         },
         "GATEWAY_API_PASSWORD": {
             "required": true,
-            "description": "Your TEST gateway API password"
+            "description": "Your Gateway API password"
+        },
+        "GATEWAY_REGION": {
+            "required": true,
+            "description": "The Gateway region to target (options: Test, Europe, Asia Pacific, North America)",
+            "value": "Test"
         },
         "GATEWAY_API_VERSION": {
             "required": true,
-            "description": "The gateway API version to target",
+            "description": "The Gateway API version to target",
             "value": "44"
         }
     },

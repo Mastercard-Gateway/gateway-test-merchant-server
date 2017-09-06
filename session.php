@@ -27,50 +27,26 @@
  * SUCH DAMAGE.
  */
 
-error_reporting('all');
+include '_bootstrap.php';
 
-$merchantId = getenv('GATEWAY_MERCHANT_ID');
-$password = getenv('GATEWAY_API_PASSWORD');
-$apiVersion = getenv('GATEWAY_API_VERSION');
-
-// default merchant id
-if (empty($merchantId)) {
-    $merchantId = 'TEST_MERCHANT_ID';
-}
-
-$gatewayUrl = 'https://test-gateway.mastercard.com/api/rest/version/' . $apiVersion . '/merchant/' . $merchantId;
-
-$headers = array(
-    'Content-type: application/json',
-    'Authorization: Basic ' . base64_encode("merchant.$merchantId:$password")
-);
-
-function doRequest($url, $method, $data = null, $headers = null) {
-    $curl = curl_init($url);
-    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    if ($data) {
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-    }
-    if ($headers) {
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-    }
-    $response = curl_exec($curl);
-    curl_close($curl);
-
-    return $response;
-}
-
-// GET requests will create a new session with the gateway
+// proxy POST requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $response = doRequest($gatewayUrl . '/session', 'POST', null, $headers);
+    // build endpoint url
+    $url = $gatewayUrl . '/session';
 
+    // get json payload from request
+    $data = parseJsonPayload();
+
+    // do request
+    $response = doRequest($url, 'POST', json_encode($data), $headers);
+
+    // output response
     header('Content-Type: application/json');
     print_r($response);
     exit;
 }
 
-// POST requests will process a payment for an updated session
+// proxy PUT requests
 if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $orderId = 'TEST-' . bin2hex(openssl_random_pseudo_bytes(5));
     $txnId = 'TEST-' . bin2hex(openssl_random_pseudo_bytes(5));
@@ -101,9 +77,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     exit;
 }
 
-
-$url = "http".(!empty($_SERVER['HTTPS'])?"s":"")."://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-
 ?>
 
 <html>
@@ -122,7 +95,7 @@ $url = "http".(!empty($_SERVER['HTTPS'])?"s":"")."://".$_SERVER['SERVER_NAME'].$
         <p>Creates a Session with the gateway, and returns relevant data.</p>
 
         <h4>Request</h4>
-        <pre><code>POST <?php echo $url; ?></code></pre>
+        <pre><code>POST <?php echo $pageUrl; ?></code></pre>
 
         <h4>Response</h4>
         <p>Refer to gateway API docs for full response body documentation: <a href="https://test-gateway.mastercard.com/api/documentation/apiDocumentation/rest-json/version/latest/operation/Session%3a%20Create%20Session.html">Session: Create Session</a></p>
@@ -141,7 +114,7 @@ $url = "http".(!empty($_SERVER['HTTPS'])?"s":"")."://".$_SERVER['SERVER_NAME'].$
         <p>Completes a payment after a session has been updated with card holder information</p>
 
         <h4>Request</h4>
-        <pre><code>PUT <?php echo $url; ?>
+        <pre><code>PUT <?php echo $pageUrl; ?>
 
 Content-Type: application/json
 Sample Payload:
