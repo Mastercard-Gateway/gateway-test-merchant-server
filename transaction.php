@@ -67,7 +67,7 @@ Payload:
     	"currency": "USD"
     },
     "session": {
-    	"id": "SESSION0002588486932L2266796L57"
+    	"id": "SESSION0000000000000000000000"
     },
     "sourceOfFunds": {
     	"type": "CARD"
