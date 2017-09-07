@@ -68,7 +68,7 @@ $pageUrl = full_url($_SERVER);
 $docsUrl = "https://$regionPrefix-gateway.mastercard.com/api/documentation/apiDocumentation/rest-json/version/latest/api.html";
 
 function url_origin( $s, $use_forwarded_host = false ) {
-    $ssl      = ( ! empty( $s['HTTPS'] ) && $s['HTTPS'] == 'on' );
+    $ssl      = ( ! empty( $s['HTTPS'] ) );
     $sp       = strtolower( $s['SERVER_PROTOCOL'] );
     $protocol = substr( $sp, 0, strpos( $sp, '/' ) ) . ( ( $ssl ) ? 's' : '' );
     $port     = $s['SERVER_PORT'];
