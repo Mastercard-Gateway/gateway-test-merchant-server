@@ -32,26 +32,27 @@ error_reporting('all');
 // pull environment vars
 $merchantId = getenv('GATEWAY_MERCHANT_ID');
 $password = getenv('GATEWAY_API_PASSWORD');
-$region = getenv('GATEWAY_REGION');
+$baseUrl = getenv('GATEWAY_BASE_URL');
 $apiVersion = getenv('GATEWAY_API_VERSION');
+
+$merchantId = 'TESTMSDK';
+$password = '4ffb538d7c5182c1f8c3da9e6fb1df31';
+$baseUrl = 'https://test-gateway.mastercard.com';
+$apiVersion = 44;
 
 // default merchant id
 if (empty($merchantId)) {
     $merchantId = 'TEST_MERCHANT_ID';
 }
 
-// init region prefix
-$regionPrefix = 'test';
-if (strcasecmp($region, 'North America') == 0) {
-    $regionPrefix = 'na';
-} else if (strcasecmp($region, 'Asia Pacific') == 0) {
-    $regionPrefix = 'ap';
-} else if (strcasecmp($region, 'Europe') == 0) {
-    $regionPrefix = 'eu';
+// parse baseUrl and only keep original hostname
+$baseUrlHost = parse_url($baseUrl, PHP_URL_HOST);
+if (empty($baseUrlHost)) {
+    error('500', 'Invalid gateway base url');
 }
 
 // build api endpoint url
-$gatewayUrl = 'https://' . $regionPrefix . '-gateway.mastercard.com/api/rest/version/' . $apiVersion . '/merchant/' . $merchantId;
+$gatewayUrl = "https://$baseUrlHost/api/rest/version/$apiVersion/merchant/$merchantId";
 
 // parae query string
 $query = array();
@@ -65,7 +66,6 @@ $headers = array(
 
 // construct page url
 $pageUrl = "http".(!empty($_SERVER['HTTPS'])?"s":"")."://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-$docsUrl = "https://$regionPrefix-gateway.mastercard.com/api/documentation/apiDocumentation/rest-json/version/latest/api.html";
 
 function intercept($method) {
     return strcasecmp($_SERVER['REQUEST_METHOD'], $method) == 0;

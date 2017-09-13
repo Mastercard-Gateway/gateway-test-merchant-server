@@ -52,8 +52,6 @@ if (intercept('PUT')) {
     </head>
     <body>
         <h1>Transaction API</h1>
-        <p>For more information, see:<br/><a href="<?php echo $docsUrl; ?>" target="_blank"><?php echo $docsUrl; ?></a></p>
-
         <h3>PAY Operation</h3>
         <h5>Sample Request</h5>
         <pre><code>PUT <?php echo htmlentities($pageUrl . '?order={orderId}&transaction={txnId}'); ?>

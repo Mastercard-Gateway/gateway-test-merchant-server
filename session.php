@@ -49,13 +49,9 @@ if (intercept('POST')) {
     </head>
     <body>
         <h1>Session API</h1>
-        <p>For more information, see:<br/><a href="<?php echo $docsUrl; ?>" target="_blank"><?php echo $docsUrl; ?></a></p>
-
         <h3>Create Session Operation</h3>
-
         <h5>Sample Request</h5>
         <pre><code>POST <?php echo $pageUrl; ?></code></pre>
-
         <h5>Sample Response</h5>
         <pre><code>Content-Type: application/json
 Payload:

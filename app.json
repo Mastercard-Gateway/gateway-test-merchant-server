@@ -1,12 +1,8 @@
 {
     "name": "Gateway Merchant Server",
-    "description": "Sample PHP application for processing mobile SDK transactions on the Mastercard Gateway",
-    "keywords": [
-        "Mastercard",
-        "Gateway"
-    ],
-    "repository": "https://github.com/Mastercard/gateway-merchant-sample-php",
-    "website": "http://www.mastercard.com/gateway",
+    "description": "Sample PHP application for processing mobile SDK transactions on the Gateway",
+    "repository": "https://github.com/Mastercard/gateway-merchant-sample-php.git",
+    "website": "https://github.com/Mastercard/gateway-merchant-sample-php",
     "env": {
         "GATEWAY_MERCHANT_ID": {
             "required": true,
@@ -16,10 +12,9 @@
             "required": true,
             "description": "Your Gateway API password"
         },
-        "GATEWAY_REGION": {
+        "GATEWAY_BASE_URL": {
             "required": true,
-            "description": "The Gateway region to target (options: Test, Europe, Asia Pacific, North America)",
-            "value": "Test"
+            "description": "The Gateway base URL to target"
         },
         "GATEWAY_API_VERSION": {
             "required": true,
