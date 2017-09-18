@@ -8,8 +8,8 @@
         </style>
     </head>
     <body>
-        <h1>Mastercard Gateway Sample Merchant Server</h1>
-        <p>This is an sample application to help developers start building mobile applications using the Mastercard Gateway mobile SDK.</p>
+        <h1>Gateway Test Merchant Server</h1>
+        <p>This is an sample application to help developers start building mobile applications using the Gateway mobile SDK.</p>
         <h3>Available APIs</h3>
         <ul>
             <li><a href="./session.php">Session API</a></li>
