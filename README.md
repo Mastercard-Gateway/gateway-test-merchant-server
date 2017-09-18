@@ -1,4 +1,4 @@
-# Gateway Sample Merchant Server [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+# Gateway Test Merchant Server [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 This is a sample application to help developers start building mobile applications using the Gateway mobile SDK.
 
 ## Steps for running
