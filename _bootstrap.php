@@ -35,20 +35,16 @@ $password = getenv('GATEWAY_API_PASSWORD');
 $baseUrl = getenv('GATEWAY_BASE_URL');
 $apiVersion = getenv('GATEWAY_API_VERSION');
 
-$merchantId = 'TESTMSDK';
-$password = '4ffb538d7c5182c1f8c3da9e6fb1df31';
-$baseUrl = 'https://test-gateway.mastercard.com';
-$apiVersion = 44;
-
-// default merchant id
-if (empty($merchantId)) {
-    $merchantId = 'TEST_MERCHANT_ID';
+// merchant id must be TEST
+$merchantIdPrefix = substr($merchantId, 0, 4);
+if (strcasecmp($merchantIdPrefix, "test") != 0) {
+    error(500, 'Only TEST merchant IDs should be used with this software');
 }
 
 // parse baseUrl and only keep original hostname
 $baseUrlHost = parse_url($baseUrl, PHP_URL_HOST);
 if (empty($baseUrlHost)) {
-    error('500', 'Invalid gateway base url');
+    error(500, 'Invalid gateway base url');
 }
 
 // build api endpoint url
