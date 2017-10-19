@@ -25,10 +25,10 @@ $baseUrl = getenv('GATEWAY_BASE_URL');
 $apiVersion = getenv('GATEWAY_API_VERSION');
 
 // merchant id must be TEST
-$merchantIdPrefix = substr($merchantId, 0, 4);
-if (strcasecmp($merchantIdPrefix, "test") != 0) {
-    error(500, 'Only TEST merchant IDs should be used with this software');
-}
+// $merchantIdPrefix = substr($merchantId, 0, 4);
+// if (strcasecmp($merchantIdPrefix, "test") != 0) {
+//     error(500, 'Only TEST merchant IDs should be used with this software');
+// }
 
 // parse baseUrl and only keep original hostname
 $baseUrlHost = parse_url($baseUrl, PHP_URL_HOST);
