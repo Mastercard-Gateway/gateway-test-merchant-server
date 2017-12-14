@@ -21,7 +21,7 @@ error_reporting('all');
 // pull environment vars
 $merchantId = getenv('GATEWAY_MERCHANT_ID');
 $password = getenv('GATEWAY_API_PASSWORD');
-$baseUrl = getenv('GATEWAY_BASE_URL');
+$region = getenv('GATEWAY_REGION');
 $apiVersion = getenv('GATEWAY_API_VERSION');
 
 // merchant id must be TEST
@@ -30,16 +30,24 @@ if (strcasecmp($merchantIdPrefix, "test") != 0) {
     error(500, 'Only TEST merchant IDs should be used with this software');
 }
 
-// parse baseUrl and only keep original hostname
-$baseUrlHost = parse_url($baseUrl, PHP_URL_HOST);
-if (empty($baseUrlHost)) {
-    error(500, 'Invalid gateway base url');
+// get regional url prefix
+$prefix = 'test';
+if (strcasecmp($region, "ASIA_PACIFIC") == 0) {
+    $prefix = 'ap';
+} else if (strcasecmp($region, "EUROPE") == 0) {
+    $prefix = 'eu';
+} else if (strcasecmp($region, "NORTH_AMERICA") == 0) {
+    $prefix = 'na';
+} else if (strcasecmp($region, "MTF") == 0) {
+    $prefix = 'test';
+} else {
+    error(500, "Invalid region provided. Valid values include ASIA_PACIFIC, EUROPE, NORTH_AMERICA, MTF");
 }
 
 // build api endpoint url
-$gatewayUrl = "https://$baseUrlHost/api/rest/version/$apiVersion/merchant/$merchantId";
+$gatewayUrl = "https://$prefix-gateway.mastercard.com/api/rest/version/$apiVersion/merchant/$merchantId";
 
-// parae query string
+// parse query string
 $query = array();
 parse_str($_SERVER['QUERY_STRING'], $query);
 

@@ -12,9 +12,10 @@
             "required": true,
             "description": "Your TEST Gateway API password"
         },
-        "GATEWAY_BASE_URL": {
+        "GATEWAY_REGION": {
             "required": true,
-            "description": "The Gateway base URL to target"
+            "description": "The Gateway region to target (options: ASIA_PACIFIC, EUROPE, NORTH_AMERICA, MTF)",
+            "value": "MTF"
         },
         "GATEWAY_API_VERSION": {
             "required": true,
