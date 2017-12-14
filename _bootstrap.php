@@ -58,7 +58,7 @@ $headers = array(
 );
 
 // construct page url
-$pageUrl = "http".(!empty($_SERVER['HTTPS'])?"s":"")."://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+$pageUrl = "https://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 
 function intercept($method) {
     return strcasecmp($_SERVER['REQUEST_METHOD'], $method) == 0;
