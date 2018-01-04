@@ -109,8 +109,22 @@ function getJsonPayload() {
 }
 
 function outputJsonResponse($response) {
+    global $apiVersion;
+
     header('Content-Type: application/json');
-    print_r($response);
+
+    $decoded = json_decode($response, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        error(400, 'Could not parse json response from gateway');
+    }
+
+    $wrapped = array(
+        'apiVersion' => $apiVersion,
+        'gatewayResponse' => $decoded
+    );
+
+    print_r(json_encode($wrapped));
     exit;
 }
 

@@ -68,16 +68,19 @@ Payload:
         <pre><code>Content-Type: application/json
 Payload:
 {
-    "authorizationResponse": { ... },
-    "gatewayEntryPoint": "WEB_SERVICES_API",
-    "merchant": "<?php echo $merchantId; ?>",
-    "order": { ... },
-    "response": { ... },
-    "result": "SUCCESS",
-    "sourceOfFunds": { ... },
-    "timeOfRecord": "2017-01-01T00:00:00.000Z",
-    "transaction": { ... },
-    "version": "<?php echo $apiVersion; ?>"
+    "apiVersion": "<?php echo $apiVersion; ?>",
+    "gatewayResponse": {
+        "authorizationResponse": { ... },
+        "gatewayEntryPoint": "WEB_SERVICES_API",
+        "merchant": "<?php echo $merchantId; ?>",
+        "order": { ... },
+        "response": { ... },
+        "result": "SUCCESS",
+        "sourceOfFunds": { ... },
+        "timeOfRecord": "2017-01-01T00:00:00.000Z",
+        "transaction": { ... },
+        "version": "<?php echo $apiVersion; ?>"
+    }
 }</code></pre>
     </body>
 </html>

@@ -45,12 +45,15 @@ if (intercept('POST')) {
         <pre><code>Content-Type: application/json
 Payload:
 {
-    "merchant": "<?php echo $merchantId; ?>",
-    "result": "SUCCESS",
-    "session": {
-        "id": "SESSION0000000000000000000000",
-        "updateStatus": "NO_UPDATE",
-        "version": "abcdef0123"
+    "apiVersion": "<?php echo $apiVersion; ?>",
+    "gatewayResponse": {
+        "merchant": "<?php echo $merchantId; ?>",
+        "result": "SUCCESS",
+        "session": {
+            "id": "SESSION0000000000000000000000",
+            "updateStatus": "NO_UPDATE",
+            "version": "abcdef0123"
+        }
     }
 }</code></pre>
     </body>
