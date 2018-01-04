@@ -45,8 +45,7 @@ if (strcasecmp($region, "ASIA_PACIFIC") == 0) {
 }
 
 // validate apiVersion is above minimum
-$apiVersion = intval($apiVersion);
-if ($apiVersion < 39) {
+if (intval($apiVersion) < 39) {
     error(500, "API Version must be >= 39");
 }
 
