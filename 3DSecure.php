@@ -27,6 +27,15 @@ if (intercept('PUT')) {
     proxyCall($path);
 }
 
+// proxy POST requests
+if (intercept('POST')) {
+    // build path
+    $threeDSId = requiredQueryParam('3DSecureId');
+    $path = '/3DSecureId/' . $threeDSId;
+
+    proxyCall($path);
+}
+
 ?>
 
 <html>
@@ -47,17 +56,18 @@ if (intercept('PUT')) {
 Content-Type: application/json
 Payload:
 {
+    "apiOperation": "CHECK_3DS_ENROLLMENT",
+    "3DSecure": {
+      "authenticationRedirect": {
+        "responseUrl" : "myApp://someRoute"
+      }
+    },
     "order": {
     	"amount": "1.00",
     	"currency": "USD"
     },
     "session": {
     	"id": "SESSION0000000000000000000000"
-    },
-    "3DSecure": {
-    	"authenticationRedirect": {
-        "responseUrl" : "myApp://someRoute"
-      }
     }
 }</code></pre>
 
@@ -69,6 +79,11 @@ Payload:
     "gatewayResponse": {
         "3DSecure": {
           "summaryStatus": "CARD_ENROLLED"
+          "authenticationRedirect": {
+            "simple": {
+              "htmlBodyContent": "..."
+            }
+          }
         },
         "3DSecureId": "<?php echo $threeDSId; ?>",
         "merchant": "<?php echo $merchantId; ?>",
@@ -76,5 +91,42 @@ Payload:
         "version": "<?php echo $apiVersion; ?>"
     }
 }</code></pre>
+
+    <h1>3DS API</h1>
+    <h3>Process ACS Result</h3>
+    <h5>Sample Request</h5>
+    <pre><code>P <?php echo htmlentities($pageUrl . '?3DSecureId={3DSId}'); ?>
+
+Content-Type: application/json
+Payload:
+{
+  "apiOperation": "PROCESS_ACS_RESULT",
+  "3DSecure": {
+    "paRes": "..."
+  }
+}</code></pre>
+
+    <h5>Response</h5>
+    <pre><code>Content-Type: application/json
+Payload:
+{
+"apiVersion": "<?php echo $apiVersion; ?>",
+"gatewayResponse": {
+    "3DSecure": {
+      "summaryStatus": "AUTHENTICATION_SUCCESSFUL"
+      "authenticationRedirect": {
+        "simple": {
+          "htmlBodyContent": "..."
+        }
+      }
+    },
+    "3DSecureId": "<?php echo $threeDSId; ?>",
+    "merchant": "<?php echo $merchantId; ?>",
+    "response": { ... },
+    "version": "<?php echo $apiVersion; ?>"
+}
+}</code></pre>
+
+
     </body>
 </html>
