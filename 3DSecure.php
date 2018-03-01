@@ -95,7 +95,7 @@ Payload:
     <h1>3DS API</h1>
     <h3>Process ACS Result</h3>
     <h5>Sample Request</h5>
-    <pre><code>P <?php echo htmlentities($pageUrl . '?3DSecureId={3DSId}'); ?>
+    <pre><code>POST <?php echo htmlentities($pageUrl . '?3DSecureId={3DSId}'); ?>
 
 Content-Type: application/json
 Payload:
