@@ -20,13 +20,26 @@ include '_bootstrap.php';
 
 // capture POST data from issuer
 if (intercept('POST')) {
-    // $payload = getJsonPayload();
+    // ensure we have a 3DSecureId
+    $threeDSecureId = requiredQueryParam('3dsecureid');
 
-    // TODO parse payload to get encoded paRes value
-    var_dump($_POST);
+    // parse payload to get encoded paRes value
+    $post = array_change_key_case($_POST, CASE_LOWER);
+    $paResParam = 'pares';
+    if (!array_key_exists($paResParam, $post) || empty($post[$paResParam])) {
+        error(400, 'Missing required issuer response information');
+    }
 
-    // TODO decode paRes by calling Process ACS Result to obtain summaryStatus and gatewayCode
+    $data = array(
+        '3DSecure' => array(
+            'paRes' => $post[$paResParam]
+        )
+    );
 
+    // decode paRes by calling Process ACS Result to obtain summaryStatus and gatewayCode
+    $response = doRequest($gatewayUrl . '/3DSecureId/' . $threeDSecureId, 'POST', $data, $headers);
+
+    var_dump($response);
 
     exit;
 }
