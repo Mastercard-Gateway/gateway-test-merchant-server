@@ -46,7 +46,7 @@ if (intercept('POST')) {
     }
 
     // build mobile redirect
-    $redirectUrl = "gatewaysdk://3dsecure?summaryStatus=" . $decoded['summaryStatus'] . "&3DSecureId=" . $decoded['3DSecureId'];
+    $redirectUrl = "gatewaysdk://3dsecure?summaryStatus=" . $decoded['3DSecure']['summaryStatus'] . "&3DSecureId=" . $decoded['3DSecureId'];
     header("Location: " . $redirectUrl);
 
     exit;
