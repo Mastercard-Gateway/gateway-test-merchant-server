@@ -21,7 +21,7 @@ include '_bootstrap.php';
 // capture POST data from issuer
 if (intercept('POST')) {
     // ensure we have a 3DSecureId
-    $threeDSecureId = requiredQueryParam('3dsecureid');
+    $threeDSecureId = requiredQueryParam('3DSecureId');
 
     // parse payload to get encoded paRes value
     $post = array_change_key_case($_POST, CASE_LOWER);
@@ -31,6 +31,7 @@ if (intercept('POST')) {
     }
 
     $data = array(
+        'apiOperation' => 'PROCESS_ACS_RESULT',
         '3DSecure' => array(
             'paRes' => $post[$paResParam]
         )
