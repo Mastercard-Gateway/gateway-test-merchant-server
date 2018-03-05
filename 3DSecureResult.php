@@ -40,7 +40,14 @@ if (intercept('POST')) {
     // decode paRes by calling Process ACS Result to obtain summaryStatus and gatewayCode
     $response = doRequest($gatewayUrl . '/3DSecureId/' . $threeDSecureId, 'POST', json_encode($data), $headers);
 
-    var_dump($response);
+    $decoded = json_decode($response, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        error(400, 'Could not parse json response from gateway');
+    }
+
+    // build mobile redirect
+    $redirectUrl = "gatewaysdk://3dsecure?summaryStatus=" . $decoded['summaryStatus'] . "&3DSecureId=" . $decoded['3DSecureId'];
+    header("Location: " . $redirectUrl);
 
     exit;
 }
