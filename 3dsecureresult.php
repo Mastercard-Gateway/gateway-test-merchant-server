@@ -20,10 +20,10 @@ include '_bootstrap.php';
 
 // capture POST data from issuer
 if (intercept('POST')) {
-    $payload = getJsonPayload();
+    // $payload = getJsonPayload();
 
     // TODO parse payload to get encoded paRes value
-    var_dump($payload);
+    var_dump($_POST);
 
     // TODO decode paRes by calling Process ACS Result to obtain summaryStatus and gatewayCode
 
