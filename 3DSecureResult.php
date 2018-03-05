@@ -40,16 +40,11 @@ if (intercept('POST')) {
     // decode paRes by calling Process ACS Result to obtain summaryStatus and gatewayCode
     $response = doRequest($gatewayUrl . '/3DSecureId/' . $threeDSecureId, 'POST', json_encode($data), $headers);
 
-    $decoded = json_decode($response, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        error(400, 'Could not parse json response from gateway');
-    }
+    // decode json response
+    $decoded = decodeResponse($response);
 
     // build mobile redirect
-    $redirectUrl = "gatewaysdk://3dsecure?summaryStatus=" . $decoded['3DSecure']['summaryStatus'] . "&3DSecureId=" . $decoded['3DSecureId'];
-    header("Location: " . $redirectUrl);
-
-    exit;
+    doRedirect("gatewaysdk://3dsecure?summaryStatus=" . $decoded['3DSecure']['summaryStatus'] . "&3DSecureId=" . $decoded['3DSecureId']);
 }
 
 ?>
@@ -65,5 +60,7 @@ if (intercept('POST')) {
     </head>
     <body>
         <h1>3DSecure - Process Issuer Result</h1>
+        <p>This script is used to process the Issuer response during a 3DS transaction on a mobile device.<br/>The url to this page should be provided during <a href="../3DSecure.php">Check 3DS Enrollment</a>.</p>
+        <p>When you provide this page as the 3DSecure.authenticationRedirect.responseUrl parameter, you must include the 3DSecureId as a query param, as illustrated in the above link.</p>
     </body>
 </html>

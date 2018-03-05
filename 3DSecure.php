@@ -51,7 +51,7 @@ if (intercept('POST')) {
         <h1>3DS API</h1>
         <h3>Check 3DS Enrollment</h3>
         <h5>Sample Request</h5>
-        <pre><code>PUT <?php echo htmlentities($pageUrl . '?3DSecureId={3DSId}'); ?>
+        <pre><code>PUT <?php echo htmlentities($pageUrl . '?3DSecureId={3DSecureId}'); ?>
 
 Content-Type: application/json
 Payload:
@@ -59,7 +59,7 @@ Payload:
     "apiOperation": "CHECK_3DS_ENROLLMENT",
     "3DSecure": {
       "authenticationRedirect": {
-        "responseUrl" : "myApp://someRoute"
+        "responseUrl" : "<?php echo htmlentities("https://".$_SERVER['SERVER_NAME']."/3DSecureResult.php?3DSecureId={3DSecureId}"); ?>"
       }
     },
     "order": {
