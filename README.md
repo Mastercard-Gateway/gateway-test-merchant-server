@@ -13,6 +13,6 @@ All service calls responsible for handling payment information should use best-i
 * As a complimentary tool for the sample mobile apps when demonstrating functionality.
 * As a stop-gap solution for developers integrating their apps with the mobile SDKs and do not yet have service components in place to support an entire transaction lifecycle.
 
-[Android]: https://github.com/Mastercard/gateway-android-sdk
-[iOS]: https://github.com/Mastercard/gateway-ios-sdk
+[Android]: https://github.com/Mastercard-Gateway/gateway-android-sdk
+[iOS]: https://github.com/Mastercard-Gateway/gateway-ios-sdk
 [Heroku]: https://www.heroku.com
