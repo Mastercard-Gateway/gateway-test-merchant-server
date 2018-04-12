@@ -85,6 +85,11 @@ function doRequest($url, $method, $data = null, $headers = null) {
     return $response;
 }
 
+function doRedirect($url) {
+    header("Location: " . $url);
+    exit;
+}
+
 function error($code, $message) {
     http_response_code($code);
     print_r($message);
@@ -113,16 +118,21 @@ function getJsonPayload() {
     return $input;
 }
 
+function decodeResponse($response) {
+    $decoded = json_decode($response, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        error(400, 'Could not decode json response from gateway');
+    }
+
+    return $decoded;
+}
+
 function outputJsonResponse($response) {
     global $apiVersion;
 
     header('Content-Type: application/json');
 
-    $decoded = json_decode($response, true);
-
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        error(400, 'Could not parse json response from gateway');
-    }
+    $decoded = decodeResponse($response);
 
     $wrapped = array(
         'apiVersion' => $apiVersion,
