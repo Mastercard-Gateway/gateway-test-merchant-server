@@ -37,14 +37,14 @@ if (intercept('POST')) {
         )
     );
 
-    // decode paRes by calling Process ACS Result to obtain summaryStatus and gatewayCode
+    // decode paRes by calling Process ACS Result to obtain result
     $response = doRequest($gatewayUrl . '/3DSecureId/' . $threeDSecureId, 'POST', json_encode($data), $headers);
 
     // decode json response
-    $decoded = decodeResponse($response);
+    // $decoded = decodeResponse($response);
 
     // build mobile redirect
-    doRedirect("gatewaysdk://3dsecure?summaryStatus=" . $decoded['3DSecure']['summaryStatus'] . "&3DSecureId=" . $decoded['3DSecureId'] . "&jsonResponse=" . urlencode($response));
+    doRedirect("gatewaysdk://3dsecure?acsResult=" . urlencode($response));
 }
 
 ?>
