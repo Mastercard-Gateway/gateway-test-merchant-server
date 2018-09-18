@@ -44,7 +44,7 @@ if (intercept('POST')) {
     $decoded = decodeResponse($response);
 
     // build mobile redirect
-    doRedirect("gatewaysdk://3dsecure?summaryStatus=" . $decoded['3DSecure']['summaryStatus'] . "&3DSecureId=" . $decoded['3DSecureId']);
+    doRedirect("gatewaysdk://3dsecure?summaryStatus=" . $decoded['3DSecure']['summaryStatus'] . "&3DSecureId=" . $decoded['3DSecureId'] . "&result=" . $decoded['result']);
 }
 
 ?>
