@@ -31,15 +31,17 @@ if (strcasecmp($merchantIdPrefix, "test") != 0) {
 }
 
 // get regional url prefix
-$prefix = 'test';
+$prefix = 'test-';
 if (strcasecmp($region, "ASIA_PACIFIC") == 0) {
-    $prefix = 'ap';
+    $prefix = 'ap-';
 } else if (strcasecmp($region, "EUROPE") == 0) {
-    $prefix = 'eu';
+    $prefix = 'eu-';
 } else if (strcasecmp($region, "NORTH_AMERICA") == 0) {
-    $prefix = 'na';
+    $prefix = 'na-';
 } else if (strcasecmp($region, "MTF") == 0) {
-    $prefix = 'test';
+    $prefix = 'test-';
+} else if (strcasecmp($region, "QA01") == 0) {
+    $prefix = 'qa01.';
 } else {
     error(500, "Invalid region provided. Valid values include ASIA_PACIFIC, EUROPE, NORTH_AMERICA, MTF");
 }
@@ -50,7 +52,7 @@ if (intval($apiVersion) < 39) {
 }
 
 // build api endpoint url
-$gatewayUrl = "https://$prefix-gateway.mastercard.com/api/rest/version/$apiVersion/merchant/$merchantId";
+$gatewayUrl = "https://${prefix}gateway.mastercard.com/api/rest/version/${apiVersion}/merchant/${merchantId}";
 
 // parse query string
 $query = array();
