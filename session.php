@@ -66,7 +66,7 @@ Payload:
 }</code></pre>
         <h3>Update Session Operation</h3>
         <h5>Sample Request</h5>
-        <pre><code>PUT <?php htmlentities($pageUrl . '?session={sessionId}'); ?>
+        <pre><code>PUT <?php echo htmlentities($pageUrl . '?session={sessionId}'); ?>
 
 Content-Type: application/json
 Payload:
