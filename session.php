@@ -25,6 +25,14 @@ if (intercept('POST')) {
     proxyCall($path);
 }
 
+// proxy PUT requests
+if (intercept('PUT')) {
+    $sessionId = requiredQueryParam('session');
+    $path = '/session/' . $sessionId;
+
+    proxyCall($path);
+}
+
 ?>
 
 <html>
@@ -56,5 +64,29 @@ Payload:
         }
     }
 }</code></pre>
+        <h3>Update Session Operation</h3>
+        <h5>Sample Request</h5>
+        <pre><code>PUT <?php htmlentities($pageUrl . '?session={sessionId}'); ?>
+
+Content-Type: application/json
+Payload:
+{
+    "order": {
+    	"amount": "1.00",
+    	"currency": "USD"
+    }
+}</code></pre>
+        <h5>Sample Response</h5>
+        <pre><code>Content-Type: application/json
+Payload:
+{
+    "apiVersion": "<?php echo $apiVersion; ?>",
+    "gatewayResponse": {
+        "merchant": "<?php echo $merchantId; ?>",
+        "result": "SUCCESS",
+        ...etc
+    }
+}
+</code></pre>
     </body>
 </html>
