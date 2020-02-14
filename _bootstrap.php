@@ -31,17 +31,19 @@ if (strcasecmp($merchantIdPrefix, "test") != 0) {
 }
 
 // get regional url prefix
-$prefix = 'test-';
+$prefix = 'mtf.';
 if (strcasecmp($region, "ASIA_PACIFIC") == 0) {
-    $prefix = 'ap-';
+    $prefix = 'ap.';
 } else if (strcasecmp($region, "EUROPE") == 0) {
-    $prefix = 'eu-';
+    $prefix = 'eu.';
 } else if (strcasecmp($region, "NORTH_AMERICA") == 0) {
-    $prefix = 'na-';
+    $prefix = 'na.';
 } else if (strcasecmp($region, "INDIA") == 0) {
     $prefix = 'in.';
+} else if (strcasecmp($region, "CHINA") == 0) {
+    $prefix = 'cn.';
 } else if (strcasecmp($region, "MTF") == 0) {
-    $prefix = 'test-';
+    $prefix = 'mtf.';
 } else if (strcasecmp($region, "QA01") == 0) {
     $prefix = 'qa01.';
 } else {
