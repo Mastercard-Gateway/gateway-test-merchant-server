@@ -14,7 +14,7 @@
         },
         "GATEWAY_REGION": {
             "required": true,
-            "description": "The Gateway region to target (options: ASIA_PACIFIC, EUROPE, NORTH_AMERICA, INDIA, MTF)",
+            "description": "The Gateway region to target (options: ASIA_PACIFIC, EUROPE, NORTH_AMERICA, INDIA, CHINA, MTF)",
             "value": "MTF"
         },
         "GATEWAY_API_VERSION": {
