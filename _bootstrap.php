@@ -44,6 +44,8 @@ if (strcasecmp($region, "ASIA_PACIFIC") == 0) {
     $prefix = 'qa01.';
 } else if (strcasecmp($region, "QA03") == 0) {
     $prefix = 'qa03.';
+} else if (strcasecmp($region, "PEAT") == 0) {
+    $prefix = 'perf.';
 } else {
     error(500, "Invalid region provided. Valid values include ASIA_PACIFIC, EUROPE, NORTH_AMERICA, MTF");
 }
