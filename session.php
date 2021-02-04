@@ -22,6 +22,10 @@ include '_bootstrap.php';
 if (intercept('POST')) {
     $path = '/session';
 
+    if (array_key_exists('session', $query) && !empty($query['session'])) {
+        $path .= '/' . $query['session'];
+    }
+
     proxyCall($path);
 }
 
