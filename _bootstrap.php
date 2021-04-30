@@ -38,6 +38,10 @@ if (strcasecmp($region, "ASIA_PACIFIC") == 0) {
     $prefix = 'eu';
 } else if (strcasecmp($region, "NORTH_AMERICA") == 0) {
     $prefix = 'na';
+} else if (strcasecmp($region, "INDIA") == 0) {
+    $prefix = 'in';
+} else if (strcasecmp($region, "CHINA") == 0) {
+    $prefix = 'cn';
 } else if (strcasecmp($region, "MTF") == 0) {
     $prefix = 'mtf';
 } else if (strcasecmp($region, "QA01") == 0) {
@@ -55,7 +59,7 @@ if (strcasecmp($region, "ASIA_PACIFIC") == 0) {
 } else if (strcasecmp($region, "PEAT") == 0) {
     $prefix = 'perf';
 } else {
-    error(500, "Invalid region provided. Valid values include ASIA_PACIFIC, EUROPE, NORTH_AMERICA, MTF");
+    error(500, "Invalid region provided. Valid values include ASIA_PACIFIC, EUROPE, NORTH_AMERICA, INDIA, MTF");
 }
 
 // validate apiVersion is above minimum
