@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-error_reporting(E_ALL);
+error_reporting('all');
 
 // pull environment vars
 $merchantId = getenv('GATEWAY_MERCHANT_ID');
@@ -46,6 +46,8 @@ if (strcasecmp($region, "ASIA_PACIFIC") == 0) {
     $prefix = 'mtf.';
 } else if (strcasecmp($region, "QA01") == 0) {
     $prefix = 'qa01.';
+} else if (strcasecmp($region, "TEST") == 0) {
+    $prefix = 'test-';
 } else {
     error(500, "Invalid region provided. Valid values include ASIA_PACIFIC, EUROPE, NORTH_AMERICA, INDIA, MTF");
 }
