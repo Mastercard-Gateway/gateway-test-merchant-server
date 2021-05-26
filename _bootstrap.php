@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-error_reporting(E_ALL);
+//error_reporting(E_ALL);
 
 // pull environment vars
 $merchantId = getenv('GATEWAY_MERCHANT_ID');
