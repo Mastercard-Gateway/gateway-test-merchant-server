@@ -18,20 +18,20 @@
 
 include '_bootstrap.php';
 
-// proxy PUT requests
+// proxy PUT requests for INITIATE_AUTHENTICATION
 if (intercept('PUT')) {
-    // build path
-    $threeDSId = requiredQueryParam('3DSecureId');
-    $path = '/3DSecureId/' . $threeDSId;
+    $orderId = requiredQueryParam('orderId');
+    $transactionId = requiredQueryParam('transactionId');
+    $path = "/order/$orderId/transaction/$transactionId";
 
     proxyCall($path);
 }
 
-// proxy POST requests
+// proxy POST requests for AUTHENTICATE_PAYER
 if (intercept('POST')) {
-    // build path
-    $threeDSId = requiredQueryParam('3DSecureId');
-    $path = '/3DSecureId/' . $threeDSId;
+    $orderId = requiredQueryParam('orderId');
+    $transactionId = requiredQueryParam('transactionId');
+    $path = "/order/$orderId/transaction/$transactionId";
 
     proxyCall($path);
 }
@@ -39,94 +39,116 @@ if (intercept('POST')) {
 ?>
 
 <html>
-    <head>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-        <style>
-            body {
-                padding: 2rem;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>3DS API</h1>
-        <h3>Check 3DS Enrollment</h3>
-        <h5>Sample Request</h5>
-        <pre><code>PUT <?php echo htmlentities($pageUrl . '?3DSecureId={3DSecureId}'); ?>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+          integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+          crossorigin="anonymous">
+    <style>
+        body {
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+<h1>3DS 2.x API</h1>
+
+<h3>Step 1: Initiate Authentication</h3>
+<h5>Sample Request</h5>
+<pre><code>PUT <?php echo htmlentities($pageUrl . '?orderId={order-id}&transactionId={txn-id}'); ?>
 
 Content-Type: application/json
 Payload:
 {
-    "apiOperation": "CHECK_3DS_ENROLLMENT",
-    "3DSecure": {
-      "authenticationRedirect": {
-        "responseUrl" : "<?php echo htmlentities("https://".$_SERVER['SERVER_NAME']."/3DSecureResult.php?3DSecureId={3DSecureId}"); ?>"
-      }
-    },
-    "order": {
-    	"amount": "1.00",
-    	"currency": "USD"
-    },
-    "session": {
-    	"id": "SESSION0000000000000000000000"
-    }
-}</code></pre>
-
-        <h5>Response</h5>
-        <pre><code>Content-Type: application/json
-Payload:
-{
-    "apiVersion": "<?php echo $apiVersion; ?>",
-    "gatewayResponse": {
-        "3DSecure": {
-          "summaryStatus": "CARD_ENROLLED"
-          "authenticationRedirect": {
-            "simple": {
-              "htmlBodyContent": "..."
-            }
-          }
-        },
-        "3DSecureId": "<?php echo $threeDSId; ?>",
-        "merchant": "<?php echo $merchantId; ?>",
-        "response": { ... },
-        "version": "<?php echo $apiVersion; ?>"
-    }
-}</code></pre>
-
-    <h1>3DS API</h1>
-    <h3>Process ACS Result</h3>
-    <h5>Sample Request</h5>
-    <pre><code>POST <?php echo htmlentities($pageUrl . '?3DSecureId={3DSId}'); ?>
-
-Content-Type: application/json
-Payload:
-{
-  "apiOperation": "PROCESS_ACS_RESULT",
-  "3DSecure": {
-    "paRes": "..."
+  "apiOperation": "INITIATE_AUTHENTICATION",
+  "order": {
+    "currency": "SAR",
+    "reference": "order-ref-001"
+  },
+  "session": {
+    "id": "SESSION0000000000000000000000"
+  },
+  "authentication": {
+    "purpose": "PAYMENT_TRANSACTION",
+    "channel": "PAYER_BROWSER"
   }
 }</code></pre>
 
-    <h5>Response</h5>
-    <pre><code>Content-Type: application/json
+<h5>Sample Response</h5>
+<pre><code>Content-Type: application/json
 Payload:
 {
-"apiVersion": "<?php echo $apiVersion; ?>",
-"gatewayResponse": {
-    "3DSecure": {
-      "summaryStatus": "AUTHENTICATION_SUCCESSFUL"
-      "authenticationRedirect": {
-        "simple": {
-          "htmlBodyContent": "..."
+  "apiVersion": "<?php echo $apiVersion; ?>",
+  "gatewayResponse": {
+    "authentication": {
+      "acceptVersions": "3DS1,3DS2",
+      "channel": "PAYER_BROWSER",
+      "purpose": "PAYMENT_TRANSACTION",
+      "redirect": {
+        "customized": {
+          "3DS": {
+            "methodPostData": "e30=",
+            "methodUrl": "https://mtf.gateway.mastercard.com/acs/mastercard/v2/empty"
+          }
         }
-      }
+      },
+      "redirectHtml": "&lt;script id=\"initiate-authentication-script\"&gt;&lt;/script&gt;",
+      "version": "2.1.0"
     },
-    "3DSecureId": "<?php echo $threeDSId; ?>",
     "merchant": "<?php echo $merchantId; ?>",
-    "response": { ... },
+    "order": {
+      "authenticationStatus": "AUTHENTICATION_NOT_SUPPORTED",
+      "status": "AUTHENTICATION_UNSUCCESSFUL",
+      "id": "8b4cae9e-73da-48e6-950b-90a13b558c00"
+    },
+    "transaction": {
+      "id": "92fbafe1-b62d-4815-a553-b3d049daf1e7",
+      "type": "AUTHENTICATION"
+    },
+    "response": {
+      "gatewayCode": "DECLINED",
+      "gatewayRecommendation": "PROCEED"
+    },
+    "result": "FAILURE",
     "version": "<?php echo $apiVersion; ?>"
-}
+  }
 }</code></pre>
 
+<hr />
 
-    </body>
+<h3>Step 2: Authenticate Payer</h3>
+<h5>Sample Request</h5>
+<pre><code>POST <?php echo htmlentities($pageUrl . '?orderId={order-id}&transactionId={txn-id}'); ?>
+
+Content-Type: application/json
+Payload:
+{
+  "apiOperation": "AUTHENTICATE_PAYER"
+}</code></pre>
+
+<h5>Sample Response</h5>
+<pre><code>Content-Type: application/json
+Payload:
+{
+  "apiVersion": "<?php echo $apiVersion; ?>",
+  "gatewayResponse": {
+    "authentication": {
+      "summaryStatus": "AUTHENTICATION_SUCCESSFUL",
+      "redirectHtml": "&lt;html&gt;...&lt;/html&gt;"
+    },
+    "merchant": "<?php echo $merchantId; ?>",
+    "order": {
+      "id": "8b4cae9e-73da-48e6-950b-90a13b558c00",
+      "status": "AUTHENTICATED"
+    },
+    "transaction": {
+      "id": "92fbafe1-b62d-4815-a553-b3d049daf1e7",
+      "type": "AUTHENTICATION"
+    },
+    "result": "SUCCESS",
+    "version": "<?php echo $apiVersion; ?>"
+  }
+}</code></pre>
+
+</body>
 </html>
