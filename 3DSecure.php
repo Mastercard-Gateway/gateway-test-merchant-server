@@ -2,18 +2,6 @@
 
 /*
  * Copyright (c) 2016 Mastercard
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 include '_bootstrap.php';
@@ -35,7 +23,6 @@ if (intercept('POST')) {
 
     proxyCall($path);
 }
-
 ?>
 
 <html>
@@ -75,42 +62,16 @@ Payload:
 }</code></pre>
 
 <h5>Sample Response</h5>
-<pre><code>Content-Type: application/json
-Payload:
-{
-  "apiVersion": "<?php echo $apiVersion; ?>",
+<pre><code>{
   "gatewayResponse": {
     "authentication": {
-      "acceptVersions": "3DS1,3DS2",
-      "channel": "PAYER_BROWSER",
-      "purpose": "PAYMENT_TRANSACTION",
-      "redirect": {
-        "customized": {
-          "3DS": {
-            "methodPostData": "e30=",
-            "methodUrl": "https://mtf.gateway.mastercard.com/acs/mastercard/v2/empty"
-          }
-        }
-      },
-      "redirectHtml": "&lt;script id=\"initiate-authentication-script\"&gt;&lt;/script&gt;",
-      "version": "2.1.0"
+      "redirectHtml": "&lt;script&gt;...&lt;/script&gt;"
     },
-    "merchant": "<?php echo $merchantId; ?>",
     "order": {
       "authenticationStatus": "AUTHENTICATION_NOT_SUPPORTED",
-      "status": "AUTHENTICATION_UNSUCCESSFUL",
-      "id": "8b4cae9e-73da-48e6-950b-90a13b558c00"
+      "status": "AUTHENTICATION_UNSUCCESSFUL"
     },
-    "transaction": {
-      "id": "92fbafe1-b62d-4815-a553-b3d049daf1e7",
-      "type": "AUTHENTICATION"
-    },
-    "response": {
-      "gatewayCode": "DECLINED",
-      "gatewayRecommendation": "PROCEED"
-    },
-    "result": "FAILURE",
-    "version": "<?php echo $apiVersion; ?>"
+    "result": "FAILURE"
   }
 }</code></pre>
 
@@ -127,26 +88,16 @@ Payload:
 }</code></pre>
 
 <h5>Sample Response</h5>
-<pre><code>Content-Type: application/json
-Payload:
-{
-  "apiVersion": "<?php echo $apiVersion; ?>",
+<pre><code>{
   "gatewayResponse": {
     "authentication": {
       "summaryStatus": "AUTHENTICATION_SUCCESSFUL",
       "redirectHtml": "&lt;html&gt;...&lt;/html&gt;"
     },
-    "merchant": "<?php echo $merchantId; ?>",
     "order": {
-      "id": "8b4cae9e-73da-48e6-950b-90a13b558c00",
       "status": "AUTHENTICATED"
     },
-    "transaction": {
-      "id": "92fbafe1-b62d-4815-a553-b3d049daf1e7",
-      "type": "AUTHENTICATION"
-    },
-    "result": "SUCCESS",
-    "version": "<?php echo $apiVersion; ?>"
+    "result": "SUCCESS"
   }
 }</code></pre>
 

@@ -18,46 +18,46 @@
 
 include '_bootstrap.php';
 
-// capture POST data from issuer
 if (intercept('POST')) {
-    // ensure we have a 3DSecureId
     $threeDSecureId = requiredQueryParam('3DSecureId');
 
-    // parse payload to get encoded paRes value
-    $post = array_change_key_case($_POST, CASE_LOWER);
-    $paResParam = 'pares';
-    if (!array_key_exists($paResParam, $post) || empty($post[$paResParam])) {
-        error(400, 'Missing required issuer response information');
-    }
-
-    $data = array(
-        'apiOperation' => 'PROCESS_ACS_RESULT',
-        '3DSecure' => array(
-            'paRes' => $post[$paResParam]
-        )
+    // Step 1: Directly call AUTHENTICATE_PAYER (no need to decode pares)
+    $authenticatePayload = array(
+        'apiOperation' => 'AUTHENTICATE_PAYER'
     );
 
-    // decode paRes by calling Process ACS Result to obtain result
-    $response = doRequest($gatewayUrl . '/3DSecureId/' . $threeDSecureId, 'POST', json_encode($data), $headers);
+    $authResponse = doRequest(
+        $gatewayUrl . '/3DSecureId/' . $threeDSecureId,
+        'PUT',
+        json_encode($authenticatePayload),
+        $headers
+    );
 
-    // build mobile redirect
-    doRedirect("gatewaysdk://3dsecure?acsResult=" . urlencode($response));
+    // Step 2: Parse response to get summaryStatus
+    $parsed = json_decode($authResponse, true);
+    $summaryStatus = $parsed['3DSecure']['summaryStatus']
+        ?? $parsed['gatewayResponse']['authentication']['summaryStatus']
+        ?? 'UNKNOWN';
+
+    // Step 3: Redirect mobile app with final result
+    doRedirect("gatewaysdk://3dsecure?status=" . urlencode($summaryStatus));
 }
-
 ?>
 
 <html>
-    <head>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-        <style>
-            body {
-                padding: 2rem;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>3DSecure - Process Issuer Result</h1>
-        <p>This script is used to process the Issuer response during a 3DS transaction on a mobile device.<br/>The url to this page should be provided during <a href="../3DSecure.php">Check 3DS Enrollment</a>.</p>
-        <p>When you provide this page as the 3DSecure.authenticationRedirect.responseUrl parameter, you must include the 3DSecureId as a query param, as illustrated in the above link.</p>
-    </body>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+          integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+          crossorigin="anonymous">
+    <style>
+        body {
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>3DSecure - Authenticate Payer</h1>
+    <p>This script receives the Issuer response and directly calls <strong>AUTHENTICATE_PAYER</strong> using the 3DSecureId.<br/>
+    The result is then passed to the mobile app via a custom deep link.</p>
+</body>
 </html>
