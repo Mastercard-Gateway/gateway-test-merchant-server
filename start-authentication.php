@@ -35,8 +35,14 @@ try {
     // Step 2: INITIATE_AUTHENTICATION (PUT)
     $initiateResponse = proxyCall($apiBasePath, $initPayload, 'PUT');
 
+    // Debug: Print initiateResponse
+    error_log("INITIATE RESPONSE:\n" . print_r($initiateResponse, true));
+
     // Step 3: Check for summaryStatus
     $summaryStatus = $initiateResponse['gatewayResponse']['authentication']['summaryStatus'] ?? null;
+
+    // Debug: Print summaryStatus
+    error_log("SUMMARY STATUS: $summaryStatus");
 
     if ($summaryStatus === 'CARD_NOT_ENROLLED') {
         echo json_encode([
@@ -49,7 +55,14 @@ try {
 
     // Step 4: AUTHENTICATE_PAYER (POST)
     $authPayload = [ 'apiOperation' => 'AUTHENTICATE_PAYER' ];
+
+    // Debug: Print authPayload
+    error_log("AUTH PAYLOAD:\n" . print_r($authPayload, true));
+
     $authenticateResponse = proxyCall($apiBasePath, $authPayload, 'POST');
+
+    // Debug: Print authenticateResponse
+    error_log("AUTHENTICATE RESPONSE:\n" . print_r($authenticateResponse, true));
 
     // Step 5: Return both responses
     echo json_encode([
@@ -61,6 +74,7 @@ try {
 
 } catch (Exception $e) {
     http_response_code(500);
+    error_log("EXCEPTION: " . $e->getMessage());
     echo json_encode([
         'error' => 'Internal server error',
         'message' => $e->getMessage()
