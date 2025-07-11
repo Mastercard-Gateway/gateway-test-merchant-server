@@ -42,14 +42,14 @@ if (intercept('POST')) {
 
 <h3>Step 1: Initiate Authentication</h3>
 <h5>Sample Request</h5>
-<pre><code>PUT <?php echo htmlentities($pageUrl . '?orderId={order-id}&transactionId={txn-id}'); ?>
+<pre><code>PUT <?php echo htmlentities($pageUrl . '?orderId={order-id}&transactionId={transaction-id}'); ?>
 
 Content-Type: application/json
 Payload:
 {
   "apiOperation": "INITIATE_AUTHENTICATION",
   "order": {
-    "currency": "SAR",
+    "currency": "USD",
     "reference": "order-ref-001"
   },
   "session": {
@@ -62,16 +62,25 @@ Payload:
 }</code></pre>
 
 <h5>Sample Response</h5>
-<pre><code>{
+<pre><code>Content-Type: application/json
+Payload:
+{
+  "apiVersion": "<?php echo $apiVersion; ?>",
   "gatewayResponse": {
     "authentication": {
+      "version": "2.1.0",
+      "summaryStatus": "CARD_ENROLLED",
       "redirectHtml": "&lt;script&gt;...&lt;/script&gt;"
     },
     "order": {
-      "authenticationStatus": "AUTHENTICATION_NOT_SUPPORTED",
-      "status": "AUTHENTICATION_UNSUCCESSFUL"
+      "id": "ORDER-ID",
+      "status": "PENDING"
     },
-    "result": "FAILURE"
+    "transaction": {
+      "id": "TRANSACTION-ID",
+      "type": "AUTHENTICATION"
+    },
+    "result": "SUCCESS"
   }
 }</code></pre>
 
@@ -79,7 +88,7 @@ Payload:
 
 <h3>Step 2: Authenticate Payer</h3>
 <h5>Sample Request</h5>
-<pre><code>POST <?php echo htmlentities($pageUrl . '?orderId={order-id}&transactionId={txn-id}'); ?>
+<pre><code>POST <?php echo htmlentities($pageUrl . '?orderId={order-id}&transactionId={transaction-id}'); ?>
 
 Content-Type: application/json
 Payload:
@@ -88,14 +97,22 @@ Payload:
 }</code></pre>
 
 <h5>Sample Response</h5>
-<pre><code>{
+<pre><code>Content-Type: application/json
+Payload:
+{
+  "apiVersion": "<?php echo $apiVersion; ?>",
   "gatewayResponse": {
     "authentication": {
       "summaryStatus": "AUTHENTICATION_SUCCESSFUL",
       "redirectHtml": "&lt;html&gt;...&lt;/html&gt;"
     },
     "order": {
+      "id": "ORDER-ID",
       "status": "AUTHENTICATED"
+    },
+    "transaction": {
+      "id": "TRANSACTION-ID",
+      "type": "AUTHENTICATION"
     },
     "result": "SUCCESS"
   }
