@@ -16,7 +16,11 @@
  * limitations under the License.
  */
 
+
 error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', 'php://stderr'); // ✅ THIS sends logs to Heroku
 
 // pull environment vars
 $merchantId = getenv('GATEWAY_MERCHANT_ID');
