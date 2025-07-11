@@ -38,16 +38,19 @@ try {
     // Debug: Print initiateResponse
     error_log("INITIATE RESPONSE:\n" . print_r($initiateResponse, true));
 
-    // Step 3: Check for summaryStatus
-    $summaryStatus = $initiateResponse['gatewayResponse']['authentication']['summaryStatus'] ?? null;
+    // Step 3: Extract authentication status and gateway code
+    $authStatus = $initiateResponse['gatewayResponse']['order']['authenticationStatus'] ?? null;
+    $gatewayCode = $initiateResponse['gatewayResponse']['response']['gatewayCode'] ?? null;
 
-    // Debug: Print summaryStatus
-    error_log("SUMMARY STATUS: $summaryStatus");
+    // Debug: Log extracted values
+    error_log("AUTHENTICATION STATUS: $authStatus");
+    error_log("GATEWAY CODE: $gatewayCode");
 
-    if ($summaryStatus === 'CARD_NOT_ENROLLED') {
+    // Optional condition based on status
+    if ($authStatus === 'AUTHENTICATION_UNAVAILABLE') {
         echo json_encode([
             'step' => 'INITIATE_AUTHENTICATION_ONLY',
-            'message' => 'Card is not enrolled for 3DS',
+            'message' => 'Authentication is not available for this card',
             'initiateResult' => $initiateResponse
         ]);
         exit;
@@ -67,7 +70,8 @@ try {
     // Step 5: Return both responses
     echo json_encode([
         'step' => 'AUTHENTICATE_PAYER',
-        'summaryStatus' => $summaryStatus,
+        'authenticationStatus' => $authStatus,
+        'gatewayCode' => $gatewayCode,
         'initiateResult' => $initiateResponse,
         'authenticateResult' => $authenticateResponse
     ]);
