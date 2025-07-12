@@ -6,9 +6,9 @@
  */
 
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Set to 1 for local dev
+ini_set('display_errors', 0); // Set to 1 for debugging locally
 ini_set('log_errors', 1);
-ini_set('error_log', 'php://stderr'); // ✅ Heroku-compatible logging
+ini_set('error_log', 'php://stderr'); // Logs to Heroku stdout
 
 // === ENVIRONMENT VARIABLES ===
 $merchantId  = getenv('GATEWAY_MERCHANT_ID');
@@ -18,10 +18,10 @@ $apiVersion  = getenv('GATEWAY_API_VERSION');
 
 // === VALIDATION ===
 if (!$merchantId || !$password || !$region || !$apiVersion) {
-    error(500, 'Missing required environment variables.');
+    error(500, 'Missing one or more required environment variables: GATEWAY_MERCHANT_ID, GATEWAY_API_PASSWORD, GATEWAY_REGION, GATEWAY_API_VERSION.');
 }
-if (intval($apiVersion) < 39) {
-    error(500, "API Version must be >= 39");
+if (!is_numeric($apiVersion) || intval($apiVersion) < 39) {
+    error(500, "API Version must be a number >= 39.");
 }
 
 // === REGION PREFIX MAPPING ===
@@ -40,6 +40,7 @@ $regionMap = [
     "QA06" => "qa06",
     "PEAT" => "perf"
 ];
+
 $prefix = $regionMap[strtoupper($region)] ?? null;
 
 if (!$prefix) {
@@ -51,18 +52,18 @@ $gatewayUrl = "https://${prefix}.gateway.mastercard.com/api/rest/version/${apiVe
 
 // === HEADERS ===
 $headers = [
-    'Content-type: application/json',
+    'Content-Type: application/json',
     'Authorization: Basic ' . base64_encode("merchant.$merchantId:$password")
 ];
 
-// === QUERY PARSING ===
+// === PARSE QUERY STRING ===
 $query = [];
 parse_str($_SERVER['QUERY_STRING'] ?? '', $query);
 
-// === PAGE URL FOR DEBUGGING ===
+// === PAGE URL (debug reference) ===
 $pageUrl = "https://" . ($_SERVER['SERVER_NAME'] ?? '') . ($_SERVER['REQUEST_URI'] ?? '');
 
-// === HELPERS ===
+// === UTILITY FUNCTIONS ===
 
 function intercept($method) {
     return strcasecmp($_SERVER['REQUEST_METHOD'], $method) === 0;
@@ -77,18 +78,24 @@ function doRequest($url, $method, $data = null, $headers = null) {
     if (!empty($data)) {
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
     }
+
     if (!empty($headers)) {
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
     }
 
     $response = curl_exec($curl);
+    $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
     if (curl_errno($curl)) {
         $error = curl_error($curl);
         curl_close($curl);
-        error_log("CURL ERROR: $error");
+        error_log("CURL ERROR ($method $url): $error");
         error(500, "Gateway request failed: $error");
     }
+
     curl_close($curl);
+
+    // You can optionally log or inspect $httpCode here if needed
     return $response;
 }
 
@@ -117,7 +124,7 @@ function getJsonPayload() {
     if (!empty($input)) {
         json_decode($input);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            error(400, 'Could not parse JSON payload');
+            error(400, 'Invalid JSON in request body');
         }
     }
     return $input;
@@ -126,7 +133,7 @@ function getJsonPayload() {
 function decodeResponse($response) {
     $decoded = json_decode($response, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
-        error(400, 'Could not decode JSON response from gateway');
+        error(400, 'Failed to decode JSON response from gateway');
     }
     return $decoded;
 }
@@ -143,13 +150,12 @@ function outputJsonResponse($response) {
 }
 
 /**
- * proxyCall — forwards a request to the Mastercard Gateway
- * Can be used directly or inside a handler (e.g. session.php, auth.php)
+ * proxyCall — Flexible gateway request helper
  *
- * @param string $path - e.g. "/session" or "/order/{id}/transaction/{id}"
- * @param mixed  $data - array or raw JSON string (optional)
- * @param string $method - GET, POST, PUT, etc. (optional)
- * @return array - Decoded gateway response
+ * @param string $path   - API path relative to merchant, e.g. /session or /order/{id}/transaction/{id}
+ * @param mixed  $data   - Optional: array (auto encoded) or raw JSON string
+ * @param string $method - Optional: HTTP verb (default = $_SERVER['REQUEST_METHOD'])
+ * @return array - Decoded JSON response
  */
 function proxyCall($path, $data = null, $method = null) {
     global $headers, $gatewayUrl;
@@ -157,6 +163,6 @@ function proxyCall($path, $data = null, $method = null) {
     $httpMethod = $method ?: $_SERVER['REQUEST_METHOD'];
     $jsonBody = is_array($data) ? json_encode($data) : ($data ?? getJsonPayload());
 
-    $response = doRequest($gatewayUrl . $path, $httpMethod, $jsonBody, $headers);
-    return decodeResponse($response);
+    $rawResponse = doRequest($gatewayUrl . $path, $httpMethod, $jsonBody, $headers);
+    return decodeResponse($rawResponse);
 }
