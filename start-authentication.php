@@ -49,7 +49,6 @@ try {
     error_log("DEBUG: gatewayResponse used as iaData :: " . json_encode($iaData));
 
     if (!$iaData) {
-    error_log("Step 1: Inside");
         echo json_encode([
             'step' => 'INITIATE_AUTHENTICATION',
             'message' => 'No authentication data returned, proceeding without 3DS',
@@ -59,12 +58,12 @@ try {
     }
 
     // === 2. Build 3DS Transaction ===
-    // (No actual logic needed in PHP, this step is conceptual)
-    error_log("Step 2: Build 3DS2 Transaction");
+    error_log("Step 2: Build 3DS2 Transaction (noop)");
 
     // === 3. Authenticate Payer ===
     error_log("Step 3: Authenticate Payer");
-    $authPayload = [ 'apiOperation' => 'AUTHENTICATE_PAYER' ];
+
+    $authPayload = ['apiOperation' => 'AUTHENTICATE_PAYER'];
     $authenticateResponse = proxyCall($apiBasePath, $authPayload, 'POST');
     $apData = $authenticateResponse['gatewayResponse'] ?? null;
 
