@@ -41,7 +41,10 @@ try {
     $initiateResponse = proxyCall($apiBasePath, $initPayload, 'PUT');
     $iaData = $initiateResponse['gatewayResponse'] ?? null;
 
+     error_log("Step 1: response :::$iaData");
+
     if (!$iaData) {
+    error_log("Step 1: Inside");
         echo json_encode([
             'step' => 'INITIATE_AUTHENTICATION',
             'message' => 'No authentication data returned, proceeding without 3DS',
