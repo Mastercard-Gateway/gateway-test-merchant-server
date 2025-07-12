@@ -18,6 +18,7 @@
 
 include '_bootstrap.php';
 
+// proxy POST requests
 if (intercept('POST')) {
     $path = '/session';
 
@@ -25,32 +26,35 @@ if (intercept('POST')) {
         $path .= '/' . $query['session'];
     }
 
-    outputJsonResponse(proxyCall($path));
+    proxyCall($path);
 }
 
+// proxy PUT requests
 if (intercept('PUT')) {
     $sessionId = requiredQueryParam('session');
     $path = '/session/' . $sessionId;
 
-    outputJsonResponse(proxyCall($path));
+    proxyCall($path);
 }
 
-// Only show HTML if not an API request
 ?>
 
 <html>
-<head>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
-          integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-    <style> body { padding: 2rem; } </style>
-</head>
-<body>
-<h1>Session API</h1>
-<h3>Create Session Operation</h3>
-<h5>Sample Request</h5>
-<pre><code>POST <?php echo $pageUrl; ?></code></pre>
-<h5>Sample Response</h5>
-<pre><code>Content-Type: application/json
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+        <style>
+            body {
+                padding: 2rem;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Session API</h1>
+        <h3>Create Session Operation</h3>
+        <h5>Sample Request</h5>
+        <pre><code>POST <?php echo $pageUrl; ?></code></pre>
+        <h5>Sample Response</h5>
+        <pre><code>Content-Type: application/json
 Payload:
 {
     "apiVersion": "<?php echo $apiVersion; ?>",
@@ -64,20 +68,20 @@ Payload:
         }
     }
 }</code></pre>
-<h3>Update Session Operation</h3>
-<h5>Sample Request</h5>
-<pre><code>PUT <?php echo htmlentities($pageUrl . '?session={sessionId}'); ?>
+        <h3>Update Session Operation</h3>
+        <h5>Sample Request</h5>
+        <pre><code>PUT <?php echo htmlentities($pageUrl . '?session={sessionId}'); ?>
 
 Content-Type: application/json
 Payload:
 {
     "order": {
-        "amount": "1.00",
-        "currency": "USD"
+    	"amount": "1.00",
+    	"currency": "USD"
     }
 }</code></pre>
-<h5>Sample Response</h5>
-<pre><code>Content-Type: application/json
+        <h5>Sample Response</h5>
+        <pre><code>Content-Type: application/json
 Payload:
 {
     "apiVersion": "<?php echo $apiVersion; ?>",
@@ -88,5 +92,5 @@ Payload:
     }
 }
 </code></pre>
-</body>
+    </body>
 </html>

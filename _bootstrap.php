@@ -1,121 +1,130 @@
 <?php
 
 /*
- * Mastercard Gateway Proxy Bootstrap
- * Licensed under the Apache License, Version 2.0
+ * Copyright (c) 2016 Mastercard
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
+
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Set to 1 for debugging locally
+ini_set('display_errors', 0);
 ini_set('log_errors', 1);
-ini_set('error_log', 'php://stderr'); // Logs to Heroku stdout
+ini_set('error_log', 'php://stderr'); // ✅ THIS sends logs to Heroku
 
-// === ENVIRONMENT VARIABLES ===
-$merchantId  = getenv('GATEWAY_MERCHANT_ID');
-$password    = getenv('GATEWAY_API_PASSWORD');
-$region      = getenv('GATEWAY_REGION');
-$apiVersion  = getenv('GATEWAY_API_VERSION');
+// pull environment vars
+$merchantId = getenv('GATEWAY_MERCHANT_ID');
+$password = getenv('GATEWAY_API_PASSWORD');
+$region = getenv('GATEWAY_REGION');
+$apiVersion = getenv('GATEWAY_API_VERSION');
 
-// === VALIDATION ===
-if (!$merchantId || !$password || !$region || !$apiVersion) {
-    error(500, 'Missing one or more required environment variables: GATEWAY_MERCHANT_ID, GATEWAY_API_PASSWORD, GATEWAY_REGION, GATEWAY_API_VERSION.');
+// merchant id must be TEST
+$merchantIdPrefix = substr($merchantId, 0, 4);
+// if (strcasecmp($merchantIdPrefix, "test") != 0) {
+//     error(500, 'Only TEST merchant IDs should be used with this software');
+// }
+
+// get regional url prefix
+$prefix = 'mtf';
+if (strcasecmp($region, "ASIA_PACIFIC") == 0) {
+    $prefix = 'ap';
+} else if (strcasecmp($region, "EUROPE") == 0) {
+    $prefix = 'eu';
+} else if (strcasecmp($region, "NORTH_AMERICA") == 0) {
+    $prefix = 'na';
+} else if (strcasecmp($region, "INDIA") == 0) {
+    $prefix = 'in';
+} else if (strcasecmp($region, "CHINA") == 0) {
+    $prefix = 'cn';
+} else if (strcasecmp($region, "MTF") == 0) {
+    $prefix = 'mtf';
+} else if (strcasecmp($region, "QA01") == 0) {
+    $prefix = 'qa01';
+} else if (strcasecmp($region, "QA02") == 0) {
+    $prefix = 'qa02';
+} else if (strcasecmp($region, "QA03") == 0) {
+    $prefix = 'qa03';
+} else if (strcasecmp($region, "QA04") == 0) {
+    $prefix = 'qa04';
+} else if (strcasecmp($region, "QA05") == 0) {
+    $prefix = 'qa05';
+} else if (strcasecmp($region, "QA06") == 0) {
+    $prefix = 'qa06';
+} else if (strcasecmp($region, "PEAT") == 0) {
+    $prefix = 'perf';
+} else {
+    error(500, "Invalid region provided. Valid values include ASIA_PACIFIC, EUROPE, NORTH_AMERICA, INDIA, MTF");
 }
-if (!is_numeric($apiVersion) || intval($apiVersion) < 39) {
-    error(500, "API Version must be a number >= 39.");
+
+// validate apiVersion is above minimum
+if (intval($apiVersion) < 39) {
+    error(500, "API Version must be >= 39");
 }
 
-// === REGION PREFIX MAPPING ===
-$regionMap = [
-    "ASIA_PACIFIC" => "ap",
-    "EUROPE" => "eu",
-    "NORTH_AMERICA" => "na",
-    "INDIA" => "in",
-    "CHINA" => "cn",
-    "MTF" => "mtf",
-    "QA01" => "qa01",
-    "QA02" => "qa02",
-    "QA03" => "qa03",
-    "QA04" => "qa04",
-    "QA05" => "qa05",
-    "QA06" => "qa06",
-    "PEAT" => "perf"
-];
-
-$prefix = $regionMap[strtoupper($region)] ?? null;
-
-if (!$prefix) {
-    error(500, "Invalid region: $region. Valid values: " . implode(', ', array_keys($regionMap)));
-}
-
-// === GATEWAY URL ===
+// build api endpoint url
 $gatewayUrl = "https://${prefix}.gateway.mastercard.com/api/rest/version/${apiVersion}/merchant/${merchantId}";
 
-// === HEADERS ===
-$headers = [
-    'Content-Type: application/json',
+// parse query string
+$query = array();
+parse_str($_SERVER['QUERY_STRING'], $query);
+
+// build auth headers
+$headers = array(
+    'Content-type: application/json',
     'Authorization: Basic ' . base64_encode("merchant.$merchantId:$password")
-];
+);
 
-// === PARSE QUERY STRING ===
-$query = [];
-parse_str($_SERVER['QUERY_STRING'] ?? '', $query);
-
-// === PAGE URL (debug reference) ===
-$pageUrl = "https://" . ($_SERVER['SERVER_NAME'] ?? '') . ($_SERVER['REQUEST_URI'] ?? '');
-
-// === UTILITY FUNCTIONS ===
+// construct page url
+$pageUrl = "https://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 
 function intercept($method) {
-    return strcasecmp($_SERVER['REQUEST_METHOD'], $method) === 0;
+    return strcasecmp($_SERVER['REQUEST_METHOD'], $method) == 0;
 }
 
 function doRequest($url, $method, $data = null, $headers = null) {
     $curl = curl_init($url);
     curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 30);
-
     if (!empty($data)) {
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
     }
-
     if (!empty($headers)) {
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
     }
-
     $response = curl_exec($curl);
-    $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-
-    if (curl_errno($curl)) {
-        $error = curl_error($curl);
-        curl_close($curl);
-        error_log("CURL ERROR ($method $url): $error");
-        error(500, "Gateway request failed: $error");
-    }
-
     curl_close($curl);
 
-    // You can optionally log or inspect $httpCode here if needed
     return $response;
+}
+
+function doRedirect($url) {
+    header("Location: " . $url);
+    exit;
 }
 
 function error($code, $message) {
     http_response_code($code);
-    header('Content-Type: application/json');
-    echo json_encode(['error' => $message]);
-    exit;
-}
-
-function doRedirect($url) {
-    header("Location: $url");
+    print_r($message);
     exit;
 }
 
 function requiredQueryParam($param) {
     global $query;
-    if (!isset($query[$param]) || trim($query[$param]) === '') {
-        error(400, "Missing required query param: $param");
+
+    if (!array_key_exists($param, $query) || empty($query[$param])) {
+        error(400, 'Missing required query param: ' . $param);
     }
+
     return $query[$param];
 }
 
@@ -124,45 +133,47 @@ function getJsonPayload() {
     if (!empty($input)) {
         json_decode($input);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            error(400, 'Invalid JSON in request body');
+            error(400, 'Could not parse json payload');
         }
     }
+
     return $input;
 }
 
 function decodeResponse($response) {
     $decoded = json_decode($response, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
-        error(400, 'Failed to decode JSON response from gateway');
+        error(400, 'Could not decode json response from gateway');
     }
+
     return $decoded;
 }
 
 function outputJsonResponse($response) {
     global $apiVersion;
+
     header('Content-Type: application/json');
+
     $decoded = decodeResponse($response);
-    echo json_encode([
+
+    $wrapped = array(
         'apiVersion' => $apiVersion,
         'gatewayResponse' => $decoded
-    ]);
+    );
+
+    print_r(json_encode($wrapped));
     exit;
 }
 
-/**
- * proxyCall — Flexible gateway request helper
- *
- * @param string $path   - API path relative to merchant, e.g. /session or /order/{id}/transaction/{id}
- * @param mixed  $data   - Optional: array (auto encoded) or raw JSON string
- * @param string $method - Optional: HTTP verb (default = $_SERVER['REQUEST_METHOD'])
- * @return array - Decoded JSON response
- */
-function proxyCall($path, $data = null, $method = null) {
+function proxyCall($path) {
     global $headers, $gatewayUrl;
 
-    $httpMethod = $method ?: $_SERVER['REQUEST_METHOD'];
-    $jsonBody = is_array($data) ? json_encode($data) : ($data ?? getJsonPayload());
+    // get json payload from request
+    $payload = getJsonPayload();
 
-    $rawResponse = doRequest($gatewayUrl . $path, $httpMethod, $jsonBody, $headers);
-    return decodeResponse($rawResponse);
+    // proxy authenticated request
+    $response = doRequest($gatewayUrl . $path, $_SERVER['REQUEST_METHOD'], $payload, $headers);
+
+    // output response
+    outputJsonResponse($response);
 }
