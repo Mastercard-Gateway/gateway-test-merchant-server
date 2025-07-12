@@ -38,10 +38,15 @@ try {
 
     // === 1. Initiate Authentication ===
     error_log("Step 1: Initiate Authentication");
-    $initiateResponse = proxyCall($apiBasePath, $initPayload, 'PUT');
-    $iaData = $initiateResponse['gatewayResponse'] ?? null;
 
-    error_log("Step 1: response ::" . json_encode($initiateResponse));
+    $initiateResponse = proxyCall($apiBasePath, $initPayload, 'PUT');
+
+    error_log("DEBUG: Full initiateResponse :: " . json_encode($initiateResponse));
+
+    // Attempt fallback to root if 'gatewayResponse' is not found
+    $iaData = $initiateResponse['gatewayResponse'] ?? $initiateResponse;
+
+    error_log("DEBUG: gatewayResponse used as iaData :: " . json_encode($iaData));
 
     if (!$iaData) {
     error_log("Step 1: Inside");
