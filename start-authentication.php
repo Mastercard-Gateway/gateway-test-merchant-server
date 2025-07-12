@@ -1,7 +1,11 @@
 <?php
 /*
- * Unified 3DS 2.x Authentication Flow
- * Performs INITIATE_AUTHENTICATION and AUTHENTICATE_PAYER sequentially
+ * Unified 3DS 2.x Authentication Flow (PHP equivalent of Kotlin steps)
+ * Steps:
+ * 1. Initiate Authentication
+ * 2. Build 3DS2 Transaction (conceptual - no-op in PHP)
+ * 3. Authenticate Payer
+ * 4. Return response
  */
 
 header('Content-Type: application/json');
@@ -13,7 +17,7 @@ try {
     $transactionId = requiredQueryParam('transactionId');
     $apiBasePath = "/order/{$orderId}/transaction/{$transactionId}";
 
-    // Step 1: Read and decode JSON input for INITIATE_AUTHENTICATION
+    // Step 1: Read and validate JSON input for INITIATE_AUTHENTICATION
     $rawInput = file_get_contents('php://input');
     $initPayload = json_decode($rawInput, true);
 
@@ -32,46 +36,43 @@ try {
         exit;
     }
 
-    // Step 2: INITIATE_AUTHENTICATION (PUT)
+    // === 1. Initiate Authentication ===
+    error_log("Step 1: Initiate Authentication");
     $initiateResponse = proxyCall($apiBasePath, $initPayload, 'PUT');
+    $iaData = $initiateResponse['gatewayResponse'] ?? null;
 
-    // Debug: Print initiateResponse
-    error_log("INITIATE RESPONSE:\n" . print_r($initiateResponse, true));
-
-    // Step 3: Extract authentication status and gateway code
-    $authStatus = $initiateResponse['gatewayResponse']['order']['authenticationStatus'] ?? null;
-    $gatewayCode = $initiateResponse['gatewayResponse']['response']['gatewayCode'] ?? null;
-
-    // Debug: Log extracted values
-    error_log("AUTHENTICATION STATUS: $authStatus");
-    error_log("GATEWAY CODE: $gatewayCode");
-
-    // Optional condition based on status
-    if ($authStatus === 'AUTHENTICATION_UNAVAILABLE') {
+    if (!$iaData) {
         echo json_encode([
-            'step' => 'INITIATE_AUTHENTICATION_ONLY',
-            'message' => 'Authentication is not available for this card',
+            'step' => 'INITIATE_AUTHENTICATION',
+            'message' => 'No authentication data returned, proceeding without 3DS',
             'initiateResult' => $initiateResponse
         ]);
         exit;
     }
 
-    // Step 4: AUTHENTICATE_PAYER (POST)
+    // === 2. Build 3DS Transaction ===
+    // (No actual logic needed in PHP, this step is conceptual)
+    error_log("Step 2: Build 3DS2 Transaction");
+
+    // === 3. Authenticate Payer ===
+    error_log("Step 3: Authenticate Payer");
     $authPayload = [ 'apiOperation' => 'AUTHENTICATE_PAYER' ];
-
-    // Debug: Print authPayload
-    error_log("AUTH PAYLOAD:\n" . print_r($authPayload, true));
-
     $authenticateResponse = proxyCall($apiBasePath, $authPayload, 'POST');
+    $apData = $authenticateResponse['gatewayResponse'] ?? null;
 
-    // Debug: Print authenticateResponse
-    error_log("AUTHENTICATE RESPONSE:\n" . print_r($authenticateResponse, true));
+    if (!$apData) {
+        echo json_encode([
+            'step' => 'AUTHENTICATE_PAYER',
+            'message' => 'Frictionless flow detected, no challenge required',
+            'initiateResult' => $initiateResponse,
+            'authenticateResult' => $authenticateResponse
+        ]);
+        exit;
+    }
 
-    // Step 5: Return both responses
+    // === 4. Return full flow data ===
     echo json_encode([
-        'step' => 'AUTHENTICATE_PAYER',
-        'authenticationStatus' => $authStatus,
-        'gatewayCode' => $gatewayCode,
+        'step' => 'CHALLENGE_OR_COMPLETION',
         'initiateResult' => $initiateResponse,
         'authenticateResult' => $authenticateResponse
     ]);
