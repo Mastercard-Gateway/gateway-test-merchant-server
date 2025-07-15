@@ -9,7 +9,7 @@
 
 include '_bootstrap.php';
 
-if (intercept('GET')) {
+if (intercept('POST')) {
     error_log("=== proxyCall invoked ===");
 
     $orderId = $_GET['order'] ?? null;
