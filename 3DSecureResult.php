@@ -19,6 +19,7 @@
 include '_bootstrap.php';
 
 if (intercept('GET')) {
+error_log("=== proxyCall invoked ===");
     $orderId = $_GET['order'] ?? null;
     $transactionId = $_GET['transaction'] ?? null;
 

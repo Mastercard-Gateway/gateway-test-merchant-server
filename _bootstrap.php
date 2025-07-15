@@ -167,6 +167,7 @@ function outputJsonResponse($response) {
 
 function proxyCall($path) {
     global $headers, $gatewayUrl;
+  error_log("=== proxyCall invoked ===");
 
     // get json payload from request
     $payload = getJsonPayload();
