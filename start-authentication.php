@@ -109,6 +109,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $pageUrl = $_SERVER['PHP_SELF'];
 $apiVersion = "64"; // can be dynamic
 ?>
+<?php
+$pageUrl = $_SERVER['PHP_SELF'];
+$apiVersion = "64"; // can be dynamic
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -135,20 +139,23 @@ $apiVersion = "64"; // can be dynamic
 <h3>Start Authentication (Initiate + Authenticate)</h3>
 
 <h5>Sample Request</h5>
-<pre><code>POST <?php echo htmlentities($pageUrl . '?orderId=3A14BBA8&transactionId=611B3FF4'); ?>
-
+<pre>
+POST <?php echo htmlentities($pageUrl); ?>?orderId={order-id}&transactionId={transaction-id}
 Content-Type: application/json
+
 Payload:
 {
   "apiOperation": "INITIATE_AUTHENTICATION",
   "session": {
-    "id": "SESSION0002590866535M47240905H2"
+    "id": "SESSION_ID_HERE"
   }
 }
-</code></pre>
+</pre>
 
 <h5>Sample Response</h5>
-<pre><code>Content-Type: application/json
+<pre>
+Content-Type: application/json
+
 Payload:
 {
   "step": "CHALLENGE_OR_COMPLETION",
@@ -158,14 +165,14 @@ Payload:
       "authentication": {
         "version": "2.1.0",
         "summaryStatus": "CARD_ENROLLED",
-        "redirectHtml": "&lt;script&gt;...&lt;/script&gt;"
+        "redirectHtml": "<script>...</script>"
       },
       "order": {
-        "id": "3A14BBA8",
+        "id": "{order-id}",
         "status": "PENDING"
       },
       "transaction": {
-        "id": "611B3FF4",
+        "id": "{transaction-id}",
         "type": "AUTHENTICATION"
       },
       "result": "SUCCESS"
@@ -176,21 +183,21 @@ Payload:
     "gatewayResponse": {
       "authentication": {
         "summaryStatus": "AUTHENTICATION_SUCCESSFUL",
-        "redirectHtml": "&lt;html&gt;...&lt;/html&gt;"
+        "redirectHtml": "<html>...</html>"
       },
       "order": {
-        "id": "3A14BBA8",
+        "id": "{order-id}",
         "status": "AUTHENTICATED"
       },
       "transaction": {
-        "id": "611B3FF4",
+        "id": "{transaction-id}",
         "type": "AUTHENTICATION"
       },
       "result": "SUCCESS"
     }
   }
 }
-</code></pre>
+</pre>
 
 </body>
 </html>
