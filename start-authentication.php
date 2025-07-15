@@ -106,11 +106,8 @@ try {
     ]);
 }
 
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Start Authentication</title>
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
           integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
@@ -119,20 +116,14 @@ try {
         body {
             padding: 2rem;
         }
-        pre {
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border: 1px solid #dee2e6;
-            border-radius: 0.3rem;
-        }
     </style>
 </head>
 <body>
 
-    <h3>Start Authentication (Initiate + Authenticate)</h3>
+<h3>Start Authentication (Initiate + Authenticate)</h3>
 
-    <h5>Sample Request</h5>
-    <pre><code>POST <?php echo htmlentities($pageUrl . '?orderId=3A14BBA8&transactionId=611B3FF4'); ?>
+<h5>Sample Request</h5>
+<pre><code>POST <?php echo htmlentities($pageUrl . '?orderId={order-id}&transactionId={transaction-id}'); ?>
 
 Content-Type: application/json
 Payload:
@@ -144,8 +135,8 @@ Payload:
 }
 </code></pre>
 
-    <h5>Sample Response</h5>
-    <pre><code>Content-Type: application/json
+<h5>Sample Response</h5>
+<pre><code>Content-Type: application/json
 Payload:
 {
   "step": "CHALLENGE_OR_COMPLETION",
