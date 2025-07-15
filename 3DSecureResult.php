@@ -18,18 +18,21 @@
 
 include '_bootstrap.php';
 
-if (intercept('POST')) {
-    $threeDSecureId = requiredQueryParam('3DSecureId');
+if (intercept('GET')) {
+    $orderId = $_GET['order'] ?? null;
+    $transactionId = $_GET['transaction'] ?? null;
 
-    // Step 1: Directly call AUTHENTICATE_PAYER (no need to decode pares)
-    $authenticatePayload = array(
-        'apiOperation' => 'AUTHENTICATE_PAYER'
-    );
+    if (!$orderId || !$transactionId) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Missing order or transaction ID']);
+        exit;
+    }
 
-    $authResponse = doRequest(
-        $gatewayUrl . '/3DSecureId/' . $threeDSecureId,
-        'PUT',
-        json_encode($authenticatePayload),
+    // Call only the transaction API (includes order context)
+    $response = doRequest(
+        $gatewayUrl . "/order/$orderId/transaction/$transactionId",
+        'GET',
+        null,
         $headers
     );
 
