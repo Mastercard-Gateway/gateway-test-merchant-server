@@ -40,7 +40,7 @@ try {
     error_log("Step 1: Initiate Authentication");
     error_log("Payload: " . json_encode($initPayload));
 
-    $initiateResponse = proxyCall($apiBasePath, $initPayload, 'POST');
+    $initiateResponse = proxyCall($apiBasePath, $initPayload, 'PUT');
     error_log("DEBUG: initiateResponse: " . json_encode($initiateResponse));
 
     $iaData = $initiateResponse['gatewayResponse'] ?? $initiateResponse;
