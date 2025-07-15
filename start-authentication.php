@@ -129,26 +129,23 @@ try {
 </head>
 <body>
 
-<h3>Start Authentication (Initiate + Authenticate)</h3>
+    <h3>Start Authentication (Initiate + Authenticate)</h3>
 
-<h5>Sample Request</h5>
-<pre>
-POST <?php echo htmlentities($pageUrl); ?>?orderId={order-id}&transactionId={transaction-id}
+    <h5>Sample Request</h5>
+    <pre><code>POST <?php echo htmlentities($pageUrl . '?orderId=3A14BBA8&transactionId=611B3FF4'); ?>
+
 Content-Type: application/json
-
 Payload:
 {
   "apiOperation": "INITIATE_AUTHENTICATION",
   "session": {
-    "id": "SESSION_ID_HERE"
+    "id": "SESSION0002590866535M47240905H2"
   }
 }
-</pre>
+</code></pre>
 
-<h5>Sample Response</h5>
-<pre>
-Content-Type: application/json
-
+    <h5>Sample Response</h5>
+    <pre><code>Content-Type: application/json
 Payload:
 {
   "step": "CHALLENGE_OR_COMPLETION",
@@ -158,14 +155,14 @@ Payload:
       "authentication": {
         "version": "2.1.0",
         "summaryStatus": "CARD_ENROLLED",
-        "redirectHtml": "<script>...</script>"
+        "redirectHtml": "&lt;script&gt;...&lt;/script&gt;"
       },
       "order": {
-        "id": "{order-id}",
+        "id": "3A14BBA8",
         "status": "PENDING"
       },
       "transaction": {
-        "id": "{transaction-id}",
+        "id": "611B3FF4",
         "type": "AUTHENTICATION"
       },
       "result": "SUCCESS"
@@ -176,21 +173,21 @@ Payload:
     "gatewayResponse": {
       "authentication": {
         "summaryStatus": "AUTHENTICATION_SUCCESSFUL",
-        "redirectHtml": "<html>...</html>"
+        "redirectHtml": "&lt;html&gt;...&lt;/html&gt;"
       },
       "order": {
-        "id": "{order-id}",
+        "id": "3A14BBA8",
         "status": "AUTHENTICATED"
       },
       "transaction": {
-        "id": "{transaction-id}",
+        "id": "611B3FF4",
         "type": "AUTHENTICATION"
       },
       "result": "SUCCESS"
     }
   }
 }
-</pre>
+</code></pre>
 
 </body>
 </html>
