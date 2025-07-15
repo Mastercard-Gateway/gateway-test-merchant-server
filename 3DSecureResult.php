@@ -18,7 +18,7 @@
 
 include '_bootstrap.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (intercept('POST')) {
     $threeDSecureId = requiredQueryParam('3DSecureId');
 
     // Step 1: Directly call AUTHENTICATE_PAYER (no need to decode pares)
