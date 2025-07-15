@@ -93,6 +93,7 @@ function intercept($method) {
 
 function doRequest($url, $method, $data = null, $headers = null) {
     $curl = curl_init($url);
+    curl_setopt($url, CURLOPT_CUSTOMREQUEST, $url);
     curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     if (!empty($data)) {
