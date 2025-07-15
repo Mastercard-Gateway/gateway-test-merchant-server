@@ -23,7 +23,7 @@ $apiVersion = "64"; // Can be dynamic
 <h3>Start Authentication (INITIATE + AUTHENTICATE)</h3>
 
 <h5>Sample Request</h5>
-<pre><code>POST <?php echo htmlentities($pageUrl . 'https://francophone-leaf-52430-c8565a556f27.herokuapp.com/orderId={order-id}&transactionId={transaction-id}'); ?>
+<pre><code>POST <?php echo htmlentities($'https://francophone-leaf-52430-c8565a556f27.herokuapp.com/orderId={order-id}&transactionId={transaction-id}'); ?>
 
 Content-Type: application/json
 Payload:
