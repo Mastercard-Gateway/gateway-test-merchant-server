@@ -29,8 +29,10 @@ if (intercept('POST')) {
     );
 
     header('Content-Type: application/json');
-    echo $response;
-    exit;
+
+    // log the response
+    error_log("=== proxyCall response ===");
+    error_log($response);
 
     $parsed = json_decode($response, true);
     $summaryStatus = $parsed['3DSecure']['summaryStatus']
