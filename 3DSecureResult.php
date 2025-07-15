@@ -4,22 +4,14 @@
  * Copyright (c) 2016 Mastercard
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 include '_bootstrap.php';
 
 if (intercept('GET')) {
-error_log("=== proxyCall invoked ===");
+    error_log("=== proxyCall invoked ===");
+
     $orderId = $_GET['order'] ?? null;
     $transactionId = $_GET['transaction'] ?? null;
 
@@ -29,7 +21,7 @@ error_log("=== proxyCall invoked ===");
         exit;
     }
 
-    // Call only the transaction API (includes order context)
+    // Call Mastercard transaction API (includes order context)
     $response = doRequest(
         $gatewayUrl . "/order/$orderId/transaction/$transactionId",
         'GET',
@@ -37,17 +29,17 @@ error_log("=== proxyCall invoked ===");
         $headers
     );
 
-    // Step 2: Parse response to get summaryStatus
-    $parsed = json_decode($authResponse, true);
+    // Parse response correctly
+    $parsed = json_decode($response, true);
     $summaryStatus = $parsed['3DSecure']['summaryStatus']
+        ?? $parsed['authentication']['3ds2']['transactionStatus']
         ?? $parsed['gatewayResponse']['authentication']['summaryStatus']
         ?? 'UNKNOWN';
 
-    // Step 3: Redirect mobile app with final result
+    // Redirect to mobile app with result
     doRedirect("gatewaysdk://3dsecure?status=" . urlencode($summaryStatus));
 }
 ?>
-
 <html>
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
@@ -60,8 +52,8 @@ error_log("=== proxyCall invoked ===");
     </style>
 </head>
 <body>
-    <h1>3DSecure - Authenticate Payer</h1>
-    <p>This script receives the Issuer response and directly calls <strong>AUTHENTICATE_PAYER</strong> using the 3DSecureId.<br/>
-    The result is then passed to the mobile app via a custom deep link.</p>
+    <h1>3DSecure - Transaction Result</h1>
+    <p>This script receives <strong>order</strong> and <strong>transaction</strong> as query params, directly calls Mastercard, <br/>
+    and redirects to your app with the 3DS status result.</p>
 </body>
 </html>
