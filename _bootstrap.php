@@ -93,7 +93,6 @@ function intercept($method) {
 
 function doRequest($url, $method, $data = null, $headers = null) {
     $curl = curl_init($url);
-    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $url);
     curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     if (!empty($data)) {
@@ -175,7 +174,8 @@ function proxyCall($path) {
 
     // log request details
     error_log("=== proxyCall invoked ===");
-    error_log("Path: " . $path);
+    error_log("url: " . $path);
+    error_log("Path: " . $gatewayUrl);
     error_log("Method: " . $_SERVER['REQUEST_METHOD']);
     error_log("Payload: " . json_encode($payload));
     error_log("Headers: " . json_encode($headers));
