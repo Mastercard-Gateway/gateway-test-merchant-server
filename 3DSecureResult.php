@@ -28,6 +28,10 @@ if (intercept('GET')) {
         $headers
     );
 
+    header('Content-Type: application/json');
+    echo $response;
+    exit;
+
     $parsed = json_decode($response, true);
     $summaryStatus = $parsed['3DSecure']['summaryStatus']
         ?? $parsed['authentication']['3ds2']['transactionStatus']
