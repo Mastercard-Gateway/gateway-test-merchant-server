@@ -167,26 +167,35 @@ function outputJsonResponse($response) {
 
 function proxyCall($path) {
     global $headers, $gatewayUrl;
-  error_log("=== proxyCall invoked ===");
 
-    // get json payload from request
+    error_log("=== proxyCall invoked ===");
+
+    // get raw JSON payload
     $payload = getJsonPayload();
 
-    // log request details
-    error_log("=== proxyCall invoked ===");
+    // log raw request data
     error_log("url: " . $path);
     error_log("Path: " . $gatewayUrl);
     error_log("Method: " . $_SERVER['REQUEST_METHOD']);
-    error_log("Payload: " . json_encode($payload));
+    error_log("Payload: " . $payload);
     error_log("Headers: " . json_encode($headers));
 
-    // proxy authenticated request
-    $response = doRequest($gatewayUrl . $path, $_SERVER['REQUEST_METHOD'], $payload, $headers);
+    // check if payload is INITIATE_AUTHENTICATION
+    $decodedPayload = json_decode($payload, true);
+    $isInitiateAuth = isset($decodedPayload['apiOperation']) &&
+                      strtoupper($decodedPayload['apiOperation']) === 'INITIATE_AUTHENTICATION';
 
-    // log response
+    // perform gateway request
+    $response = doRequest($gatewayUrl . $path, $_SERVER['REQUEST_METHOD'], $payload, $headers);
     error_log("Response: " . $response);
 
-    // output response
+    if ($isInitiateAuth) {
+        // do NOT exit, return response for further steps
+        return decodeResponse($response);
+    }
+
+    // default: output and exit
     outputJsonResponse($response);
 }
+
 
