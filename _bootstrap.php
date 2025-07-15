@@ -171,9 +171,20 @@ function proxyCall($path) {
     // get json payload from request
     $payload = getJsonPayload();
 
+    // log request details
+    error_log("=== proxyCall invoked ===");
+    error_log("Path: " . $path);
+    error_log("Method: " . $_SERVER['REQUEST_METHOD']);
+    error_log("Payload: " . json_encode($payload));
+    error_log("Headers: " . json_encode($headers));
+
     // proxy authenticated request
     $response = doRequest($gatewayUrl . $path, $_SERVER['REQUEST_METHOD'], $payload, $headers);
+
+    // log response
+    error_log("Response: " . $response);
 
     // output response
     outputJsonResponse($response);
 }
+
