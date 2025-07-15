@@ -106,13 +106,24 @@ try {
     ]);
 }
 
-
-<h1>3DS 2.x Unified Flow</h1>
+<html>
+<head>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+          integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+          crossorigin="anonymous">
+    <style>
+        body {
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body>
 
 <h3>Start Authentication (Initiate + Authenticate)</h3>
 
 <h5>Sample Request</h5>
-<pre><code>POST https://francophone-leaf-52430-c8565a556f27.herokuapp.com/start-authentication.php?orderId=3A14BBA8&amp;transactionId=611B3FF4
+<pre><code>POST <?php echo htmlentities($pageUrl . '?orderId={order-id}&transactionId={transaction-id}'); ?>
 
 Content-Type: application/json
 Payload:
@@ -169,5 +180,7 @@ Payload:
 }
 </code></pre>
 
-<hr />
+</body>
+</html>
+
 
