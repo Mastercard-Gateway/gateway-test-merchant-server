@@ -106,17 +106,6 @@ try {
     ]);
 }
 
-// --------------------------------------
-// Handle GET (HTML Sample Page)
-// --------------------------------------
-
-$pageUrl = $_SERVER['PHP_SELF'];
-$apiVersion = "64"; // can be dynamic
-?>
-<?php
-$pageUrl = $_SERVER['PHP_SELF'];
-$apiVersion = "64"; // can be dynamic
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
