@@ -21,7 +21,6 @@ if (intercept('GET')) {
         exit;
     }
 
-    // Call Mastercard transaction API (includes order context)
     $response = doRequest(
         $gatewayUrl . "/order/$orderId/transaction/$transactionId",
         'GET',
@@ -29,26 +28,25 @@ if (intercept('GET')) {
         $headers
     );
 
-    // Parse response correctly
     $parsed = json_decode($response, true);
     $summaryStatus = $parsed['3DSecure']['summaryStatus']
         ?? $parsed['authentication']['3ds2']['transactionStatus']
         ?? $parsed['gatewayResponse']['authentication']['summaryStatus']
         ?? 'UNKNOWN';
 
-    // Redirect to mobile app with result
     doRedirect("gatewaysdk://3dsecure?status=" . urlencode($summaryStatus));
 }
+
+// Only show HTML if NOT redirected
 ?>
+<!DOCTYPE html>
 <html>
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
           integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
           crossorigin="anonymous">
     <style>
-        body {
-            padding: 2rem;
-        }
+        body { padding: 2rem; }
     </style>
 </head>
 <body>
@@ -57,3 +55,10 @@ if (intercept('GET')) {
     and redirects to your app with the 3DS status result.</p>
 </body>
 </html>
+
+<?php
+function doRedirect($url) {
+    header("Location: " . $url);
+    exit;
+}
+?>
