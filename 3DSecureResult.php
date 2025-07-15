@@ -55,10 +55,3 @@ if (intercept('GET')) {
     and redirects to your app with the 3DS status result.</p>
 </body>
 </html>
-
-<?php
-function doRedirect($url) {
-    header("Location: " . $url);
-    exit;
-}
-?>
