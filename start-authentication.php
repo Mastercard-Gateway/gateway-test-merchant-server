@@ -82,14 +82,6 @@ try {
         'apiOperation' => 'AUTHENTICATE_PAYER'
     ];
 
-    // Optional: agreement block (recurring billing)
-    // $authPayload['agreement'] = [
-    //     'id' => 'HCOAGREMNT2',
-    //     'amountVariability' => 'FIXED',
-    //     'paymentFrequency' => 'MONTHLY',
-    //     'type' => 'OTHER'
-    // ];
-
     error_log("Payload for AUTHENTICATE_PAYER: " . json_encode($authPayload));
 
     $authenticateResponse = proxyCall($apiBasePath, $authPayload, 'PUT');
@@ -113,3 +105,69 @@ try {
         'message' => $e->getMessage()
     ]);
 }
+
+
+<h1>3DS 2.x Unified Flow</h1>
+
+<h3>Start Authentication (Initiate + Authenticate)</h3>
+
+<h5>Sample Request</h5>
+<pre><code>POST https://francophone-leaf-52430-c8565a556f27.herokuapp.com/start-authentication.php?orderId=3A14BBA8&amp;transactionId=611B3FF4
+
+Content-Type: application/json
+Payload:
+{
+  "apiOperation": "INITIATE_AUTHENTICATION",
+  "session": {
+    "id": "SESSION0002590866535M47240905H2"
+  }
+}
+</code></pre>
+
+<h5>Sample Response</h5>
+<pre><code>Content-Type: application/json
+Payload:
+{
+  "step": "CHALLENGE_OR_COMPLETION",
+  "initiateResult": {
+    "apiVersion": "<?php echo $apiVersion; ?>",
+    "gatewayResponse": {
+      "authentication": {
+        "version": "2.1.0",
+        "summaryStatus": "CARD_ENROLLED",
+        "redirectHtml": "&lt;script&gt;...&lt;/script&gt;"
+      },
+      "order": {
+        "id": "3A14BBA8",
+        "status": "PENDING"
+      },
+      "transaction": {
+        "id": "611B3FF4",
+        "type": "AUTHENTICATION"
+      },
+      "result": "SUCCESS"
+    }
+  },
+  "authenticateResult": {
+    "apiVersion": "<?php echo $apiVersion; ?>",
+    "gatewayResponse": {
+      "authentication": {
+        "summaryStatus": "AUTHENTICATION_SUCCESSFUL",
+        "redirectHtml": "&lt;html&gt;...&lt;/html&gt;"
+      },
+      "order": {
+        "id": "3A14BBA8",
+        "status": "AUTHENTICATED"
+      },
+      "transaction": {
+        "id": "611B3FF4",
+        "type": "AUTHENTICATION"
+      },
+      "result": "SUCCESS"
+    }
+  }
+}
+</code></pre>
+
+<hr />
+
