@@ -40,7 +40,7 @@ try {
     error_log("Step 1: Initiate Authentication");
     error_log("Payload: " . json_encode($initPayload));
 
-    $initiateResponse = proxyCall($apiBasePath, $initPayload, 'PUT');
+    $initiateResponse = proxyCall($apiBasePath, $initPayload, 'POST');
     error_log("DEBUG: initiateResponse: " . json_encode($initiateResponse));
 
     $iaData = $initiateResponse['gatewayResponse'] ?? $initiateResponse;
@@ -92,7 +92,7 @@ try {
 
     error_log("Payload for AUTHENTICATE_PAYER: " . json_encode($authPayload));
 
-    $authenticateResponse = proxyCall($apiBasePath, $authPayload, 'POST');
+    $authenticateResponse = proxyCall($apiBasePath, $authPayload, 'PUT');
     error_log("DEBUG: authenticateResponse: " . json_encode($authenticateResponse));
 
     $apData = $authenticateResponse['gatewayResponse'] ?? null;
