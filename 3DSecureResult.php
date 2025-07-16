@@ -34,13 +34,9 @@ if (intercept('POST')) {
     error_log("=== proxyCall response ===");
     error_log($response);
 
-    $parsed = json_decode($response, true);
-    $summaryStatus = $parsed['3DSecure']['summaryStatus']
-        ?? $parsed['authentication']['3ds2']['transactionStatus']
-        ?? $parsed['gatewayResponse']['authentication']['summaryStatus']
-        ?? 'UNKNOWN';
+    // build mobile redirect with full response payload as acsResult
+    doRedirect("gatewaysdk://3dsecure?acsResult=" . urlencode($response));
 
-    doRedirect("gatewaysdk://3dsecure?status=" . urlencode($summaryStatus));
 }
 
 // Only show HTML if NOT redirected
