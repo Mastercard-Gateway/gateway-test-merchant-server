@@ -100,11 +100,7 @@ try {
     $apData = $authenticateResponse['gatewayResponse'] ?? null;
 
     // === Step 4: Return Result ===
-    echo json_encode([
-        'step' => $apData ? 'CHALLENGE_OR_COMPLETION' : 'FRICTIONLESS',
-        'initiateResult' => $initiateResponse,
-        'authenticateResult' => $authenticateResponse
-    ]);
+    echo json_encode($authenticateResponse);
 
 } catch (Exception $e) {
     http_response_code(500);
