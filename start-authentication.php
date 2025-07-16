@@ -86,7 +86,10 @@ try {
             ],
             'ipAddress' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1'
         ],
-        'apiOperation' => 'AUTHENTICATE_PAYER'
+        'apiOperation' => 'AUTHENTICATE_PAYER',
+        'authentication' => [
+                   'redirectResponseUrl' => "https://francophone-leaf-52430-c8565a556f27.herokuapp.com/3DSecureResult.php?order={$orderId}&transaction={$transactionId}"
+        ]
     ];
 
     error_log("Payload for AUTHENTICATE_PAYER: " . json_encode($authPayload));
@@ -97,11 +100,7 @@ try {
     $apData = $authenticateResponse['gatewayResponse'] ?? null;
 
     // === Step 4: Return Result ===
-    echo json_encode([
-        'step' => $apData ? 'CHALLENGE_OR_COMPLETION' : 'FRICTIONLESS',
-        'initiateResult' => $initiateResponse,
-        'authenticateResult' => $authenticateResponse
-    ]);
+    echo json_encode($authenticateResponse);
 
 } catch (Exception $e) {
     http_response_code(500);
