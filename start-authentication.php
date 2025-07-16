@@ -36,6 +36,13 @@ try {
         exit;
     }
 
+    if (!isset($initPayload['authentication'])) {
+        $initPayload['authentication'] = [
+            'purpose' => 'PAYMENT_TRANSACTION',
+            'channel' => 'PAYER_BROWSER'
+        ];
+    }
+
     // === Step 1: INITIATE_AUTHENTICATION ===
     error_log("Step 1: Initiate Authentication");
     error_log("Payload: " . json_encode($initPayload));
@@ -79,7 +86,10 @@ try {
             ],
             'ipAddress' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1'
         ],
-        'apiOperation' => 'AUTHENTICATE_PAYER'
+        'apiOperation' => 'AUTHENTICATE_PAYER',
+        'authentication' => [
+                   'redirectResponseUrl' => "https://francophone-leaf-52430-c8565a556f27.herokuapp.com/3DSecureResult.php?order={$orderId}&transaction={$transactionId}"
+        ]
     ];
 
     error_log("Payload for AUTHENTICATE_PAYER: " . json_encode($authPayload));
