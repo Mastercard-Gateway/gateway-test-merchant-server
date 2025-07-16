@@ -178,20 +178,24 @@ function proxyCall($path, $payload = null, $method = null) {
         $payload = getJsonPayload();
     }
 
-    // Log the request
+    // Log the request safely
     error_log("URL Path: " . $path);
     error_log("Gateway URL: " . $gatewayUrl);
     error_log("Method: " . $httpMethod);
-    error_log("Payload: " . $payload);
+    error_log("Payload: " . (is_string($payload) ? $payload : json_encode($payload)));
     error_log("Headers: " . json_encode($headers));
 
-    // check if payload is INITIATE_AUTHENTICATION
-    $decodedPayload = json_decode($payload, true);
+    // Decode payload (if string), or use directly if already array
+    $decodedPayload = is_array($payload) ? $payload : json_decode($payload, true);
+
     $isInitiateAuth = isset($decodedPayload['apiOperation']) &&
                       strtoupper($decodedPayload['apiOperation']) === 'INITIATE_AUTHENTICATION';
 
-    // perform gateway request
-    $response = doRequest($gatewayUrl . $path, $httpMethod, $payload, $headers);
+    // Ensure payload is a string before sending to doRequest
+    $jsonPayload = is_string($payload) ? $payload : json_encode($payload);
+
+    // Perform gateway request
+    $response = doRequest($gatewayUrl . $path, $httpMethod, $jsonPayload, $headers);
     error_log("Response: " . $response);
 
     if ($isInitiateAuth) {
