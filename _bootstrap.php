@@ -161,7 +161,7 @@ function outputJsonResponse($response) {
         'gatewayResponse' => $decoded
     );
 
-    print_r(json_encode($wrapped));
+    print_r(json_encode($response));
     exit;
 }
 
