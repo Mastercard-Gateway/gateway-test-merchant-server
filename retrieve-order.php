@@ -1,18 +1,10 @@
 <?php
 
-/*
- * Copyright (c) 2016 Mastercard
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * http://www.apache.org/licenses/LICENSE-2.0
- */
-
 include '_bootstrap.php';
 
 if (intercept('GET')) {
     error_log("=== retrieveOrder invoked ===");
 
-    // Get required query parameters
     $orderId = $_GET['order'] ?? null;
     $transactionId = $_GET['transaction'] ?? null;
 
@@ -25,10 +17,8 @@ if (intercept('GET')) {
         exit;
     }
 
-    // Construct the endpoint path
     $endpoint = "/order/$orderId/transaction/$transactionId";
 
-    // Perform the GET request
     $response = doRequest(
         $gatewayUrl . $endpoint,
         'GET',
@@ -36,18 +26,30 @@ if (intercept('GET')) {
         $headers
     );
 
-    header('Content-Type: application/json');
-
-    // Log response for debugging
     error_log("=== retrieveOrder response ===");
     error_log($response);
 
-    // Redirect back to app with acsResult payload
-    doRedirect("gatewaysdk://3dsecure?acsResult=" . urlencode($response));
+    // Return a minimal HTML page with JS redirect to the app
+    $redirectUrl = "gatewaysdk://3dsecure?acsResult=" . urlencode($response);
+    ?>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Redirecting...</title>
+        <script type="text/javascript">
+            window.location.href = <?= json_encode($redirectUrl) ?>;
+        </script>
+    </head>
+    <body>
+        <p>Redirecting to app...</p>
+    </body>
+    </html>
+    <?php
+    exit;
 }
-
-// Fallback HTML UI
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -60,8 +62,8 @@ if (intercept('GET')) {
     </style>
 </head>
 <body>
-    <h1>3DSecure - Retrieve Transaction</h1>
-    <p>This endpoint accepts <strong>order</strong> and <strong>transaction</strong> as query parameters,</p>
-    <p>Performs a Mastercard GET API call, and redirects the mobile client with the 3DS result payload.</p>
+<h1>3DSecure - Retrieve Transaction</h1>
+<p>This endpoint accepts <strong>order</strong> and <strong>transaction</strong> as query parameters,</p>
+<p>Performs a Mastercard GET API call, and redirects the mobile client with the 3DS result payload.</p>
 </body>
 </html>
