@@ -35,7 +35,7 @@ include '_bootstrap.php';
             <li><a href="./session.php">Session API</a></li>
             <li><a href="./transaction.php">Transaction API</a></li>
             <li><a href="./start-authentication-ui.php">3DSecure API</a></li>
-            <li><a href="./start-browser-payment-ui.php">3DSecure API</a></li>
+            <li><a href="./start-browser-payment-ui.php">Browser Payment API</a></li>
         </ul>
     </body>
 </html>
