@@ -24,7 +24,7 @@ if (intercept('GET')) {
     header('Content-Type: application/json');
 
     // log the response
-    error_log("=== proxyCall response ===");
+    error_log("=== proxyCall response 1 ===");
     error_log($response);
 
     // build mobile redirect with full response payload as acsResult
