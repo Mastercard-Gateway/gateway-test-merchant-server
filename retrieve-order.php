@@ -27,8 +27,16 @@ if (intercept('GET')) {
     error_log("=== proxyCall response ===");
     error_log($response);
 
+     // Decode response
+        $data = json_decode($response, true);
+
+        // Check status
+        $status = $data['browserPayment']['interaction']['status'] ?? null;
+
+
+
     // build mobile redirect with full response payload as acsResult
-    doRedirect("gatewaysdk://3dsecure?acsResult=" . urlencode($response));
+   doRedirect("gatewaysdk://3dsecure?" . http_build_query(['acsResult' => json_encode(['status' => $status])]));
 
 }
 
