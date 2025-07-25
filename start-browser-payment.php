@@ -14,8 +14,9 @@ include '_bootstrap.php';
 
 try {
     // Step 0: Required query params
-    $orderId = requiredQueryParam('orderId');
-    $transactionId = requiredQueryParam('transactionId');
+        $orderId = requiredQueryParam('orderId');
+        $transactionId = requiredQueryParam('transactionId');
+        $apiBasePath = "/order/{$orderId}/transaction/{$transactionId}";
 
     // Step 1: Parse input
     $rawInput = file_get_contents('php://input');
