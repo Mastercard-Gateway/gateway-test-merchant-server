@@ -21,40 +21,31 @@ if (intercept('GET')) {
         $headers
     );
 
-    header('Content-Type: application/json');
-
-    // log the response
+    // Log for debugging
     error_log("=== proxyCall response ===");
     error_log($response);
 
-     // Decode response
-        $data = json_decode($response, true);
+    // Escape payload for safe embedding in URL
+    $encodedPayload = urlencode($response);
+    $redirectUrl = "gatewaysdk://3dsecure?acsResult=" . $encodedPayload;
 
-        // Check status
-        $status = $data['browserPayment']['interaction']['status'] ?? null;
-
-
-
-    // build mobile redirect with full response payload as acsResult
-   doRedirect("gatewaysdk://3dsecure?" . http_build_query(['acsResult' => json_encode(['status' => $status])]));
-
+    // Instead of doRedirect(), print HTML + JS for redirection
+    ?>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Redirecting...</title>
+    </head>
+    <body>
+        <p>Redirecting to your app...</p>
+        <script>
+            window.location.href = "<?= $redirectUrl ?>";
+        </script>
+    </body>
+    </html>
+    <?php
+    exit;
 }
 
-// Only show HTML if NOT redirected
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
-          integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
-          crossorigin="anonymous">
-    <style>
-        body { padding: 2rem; }
-    </style>
-</head>
-<body>
-    <h1>3DSecure - Transaction Result</h1>
-    <p>This script receives <strong>order</strong> and <strong>transaction</strong> as query params, directly calls Mastercard, <br/>
-    and redirects to your app with the 3DS status result.</p>
-</body>
-</html>
