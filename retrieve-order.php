@@ -21,31 +21,14 @@ if (intercept('GET')) {
         $headers
     );
 
-    // Log for debugging
+    header('Content-Type: application/json');
+
+    // log the response
     error_log("=== proxyCall response ===");
     error_log($response);
 
-    // Escape payload for safe embedding in URL
-    $encodedPayload = urlencode($response);
-    $redirectUrl = "gatewaysdk://3dsecure?acsResult=" . $encodedPayload;
+    // build mobile redirect with full response payload as acsResult
+    doRedirect("gatewaysdk://3dsecure?acsResult=" . urlencode($response));
 
-    // Instead of doRedirect(), print HTML + JS for redirection
-    ?>
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Redirecting...</title>
-    </head>
-    <body>
-        <p>Redirecting to your app...</p>
-        <script>
-            window.location.href = "<?= $redirectUrl ?>";
-        </script>
-    </body>
-    </html>
-    <?php
-    exit;
 }
 
-?>
