@@ -9,7 +9,7 @@
 
 include '_bootstrap.php';
 
-if (intercept('POST')) {
+if (intercept('GET')) {
     error_log("=== retrieveOrder invoked ===");
 
     // Get required query parameters
