@@ -16,6 +16,9 @@ if (intercept('GET')) {
     $orderId = $_GET['order'] ?? null;
     $transactionId = $_GET['transaction'] ?? null;
 
+    error_log("=== order === $orderId");
+    error_log("=== transactionId === $transactionId");
+
     if (!$orderId || !$transactionId) {
         http_response_code(400);
         echo json_encode(['error' => 'Missing order or transaction ID']);
