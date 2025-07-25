@@ -31,3 +31,22 @@ if (intercept('GET')) {
     doRedirect("gatewaysdk://3dsecure?acsResult=" . urlencode($response));
 
 }
+
+// Only show HTML if NOT redirected
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+          integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+          crossorigin="anonymous">
+    <style>
+        body { padding: 2rem; }
+    </style>
+</head>
+<body>
+    <h1>3DSecure - Transaction Result</h1>
+    <p>This script receives <strong>order</strong> and <strong>transaction</strong> as query params, directly calls Mastercard, <br/>
+    and redirects to your app with the 3DS status result.</p>
+</body>
+</html>
