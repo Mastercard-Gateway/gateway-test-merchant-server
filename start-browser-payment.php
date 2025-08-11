@@ -88,67 +88,67 @@ if (intercept('PUT')) {
     <h5>Sample Request</h5>
     <pre><code>PUT <?php echo htmlentities('https://francophone-leaf-52430-c8565a556f27.herokuapp.com/start-browser-payment.php?orderId={order-id}&transactionId={transaction-id}'); ?>
 
-    Content-Type: application/json
-
-    Payload:
-    {
-    "apiOperation": "INITIATE_BROWSER_PAYMENT",
+Content-Type: application/json
+Payload:
+{
+  "customer": {
+    "phone": 1234567892
+  },
+  "browserPayment": {
+    "returnUrl": "Redirect URL to be Passed",
+    "operation": "PAY"
+  },
+  "sourceOfFunds": {
+    "type": "BROWSER_PAYMENT",
     "browserPayment": {
-        "operation": "PAY",
-        "returnUrl": "https://mcdelivery.co.in/"
-    },
-    "order": {
-        "reference": "TEST-SUCCEED",
-        "amount": "90.00",
-        "currency": "KWD",
-        "description": "apmspi test order"
-    },
-    "sourceOfFunds": {
-        "type": "BROWSER_PAYMENT",
-        "browserPayment": {
-        "type": "KNET"
-        }
-    },
-    "customer": {
-        "email": "akash.mali@mastercard.com",
-        "firstName": "Akash",
-        "lastName": "Mali",
-        "phone": "9898989898"
-    },
-    "billing": {
-        "address": {
-        "city": "Edinburgh",
-        "country": "KWT",
-        "postcodeZip": "2000"
-        }
+      "type": "UPI"
     }
-    }
-    </code></pre>
+  },
+  "apiOperation": "INITIATE_BROWSER_PAYMENT",
+  "order": {
+    "currency": "USD",
+    "amount": "1.00"
+  }
+}</code></pre>
 
     <h5>Sample Response</h5>
     <pre><code>Content-Type: application/json
-
-    {
-    "step": "INITIATE_BROWSER_PAYMENT",
-    "result": {
-        "gatewayResponse": {
-        "order": {
-            "id": "{order-id}",
-            "status": "PENDING"
-        },
-        "transaction": {
-            "id": "{transaction-id}",
-            "type": "PAYMENT"
-        },
-        "browserPayment": {
-            "redirectUrl": "https://...",
-            "response": "REQUIRES_REDIRECT"
-        },
-        "result": "SUCCESS"
-        }
-    }
-    }
-    </code></pre>
-
+Payload:
+{
+  "browserPayment": {
+    "interaction": {
+      "status": "INITIATED",
+      "timeInitiated": "2025-08-11T20:23:25.164Z"
+    },
+    "operation": "PAY",
+    "redirectHtml": "<div ...>",
+    "returnUrl": "Redirect URL Passed"
+  },
+  "customer": { "phone": "1234567892" },
+  "gatewayEntryPoint": "SERVICES_API",
+  "merchant": "TEST_12345",
+  "order": {
+    "amount": 1,
+    "currency": "USD",
+    "id": "abcde",
+    "status": "INITIATED"
+  },
+  "response": {
+    "acquirerCode": "ACCEPTED",
+    "gatewayCode": "SUBMITTED",
+    "gatewayRecommendation": "NO_ACTION"
+  },
+  "result": "SUCCESS",
+  "sourceOfFunds": {
+    "type": "BROWSER_PAYMENT",
+    "browserPayment": { "type": "UPI" }
+  },
+  "transaction": {
+    "amount": 1,
+    "currency": "USD",
+    "id": "abcdef",
+    "type": "PAYMENT"
+  }
+}</code></pre>
     </body>
 </html>
