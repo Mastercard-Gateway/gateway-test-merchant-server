@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2016 Mastercard
+ * Copyright (c) 2025 Mastercard
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ Payload:
     }
 }</code></pre>
 
-        <h5>Response</h5>
+        <h5>Sample Response</h5>
         <pre><code>Content-Type: application/json
 Payload:
 {
@@ -72,7 +72,7 @@ Payload:
     "gatewayResponse": {
         "authorizationResponse": { ... },
         "gatewayEntryPoint": "WEB_SERVICES_API",
-        "merchant": "<?php echo $merchantId; ?>",
+        "merchant": "TEST_12345",
         "order": { ... },
         "response": { ... },
         "result": "SUCCESS",

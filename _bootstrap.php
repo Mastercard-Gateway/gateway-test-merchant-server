@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2016 Mastercard
+ * Copyright (c) 2025 Mastercard
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@
  */
 
 error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', 'php://stderr'); // ✅ THIS sends logs to Heroku
 
 // pull environment vars
 $merchantId = getenv('GATEWAY_MERCHANT_ID');
@@ -157,19 +160,38 @@ function outputJsonResponse($response) {
         'gatewayResponse' => $decoded
     );
 
-    print_r(json_encode($wrapped));
+    print_r(json_encode($decoded));
     exit;
 }
 
-function proxyCall($path) {
+function proxyCall($path, $payload = null, $method = null) {
     global $headers, $gatewayUrl;
 
-    // get json payload from request
-    $payload = getJsonPayload();
+    // Determine HTTP method
+    $httpMethod = $method ?? $_SERVER['REQUEST_METHOD'];
 
-    // proxy authenticated request
-    $response = doRequest($gatewayUrl . $path, $_SERVER['REQUEST_METHOD'], $payload, $headers);
+    // Determine payload
+    if ($payload === null) {
+        $payload = getJsonPayload();
+    }
 
-    // output response
+    // Decode payload (if string), or use directly if already array
+    $decodedPayload = is_array($payload) ? $payload : json_decode($payload, true);
+
+    $isInitiateAuth = isset($decodedPayload['apiOperation']) &&
+                      strtoupper($decodedPayload['apiOperation']) === 'INITIATE_AUTHENTICATION';
+
+    // Ensure payload is a string before sending to doRequest
+    $jsonPayload = is_string($payload) ? $payload : json_encode($payload);
+
+    // Perform gateway request
+    $response = doRequest($gatewayUrl . $path, $httpMethod, $jsonPayload, $headers);
+
+    if ($isInitiateAuth) {
+        // do NOT exit, return response for further steps
+        return decodeResponse($response);
+    }
+
+    // default: output and exit
     outputJsonResponse($response);
 }

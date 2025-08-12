@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2016 Mastercard
+ * Copyright (c) 2025 Mastercard
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,10 @@ include '_bootstrap.php';
         <h3>Available APIs</h3>
         <ul>
             <li><a href="./session.php">Session API</a></li>
+            <li><a href="./payment-options-inquiry.php">Payment Options Inquiry API</a></li>
+            <li><a href="./start-authentication.php">3DSecure API</a></li>
             <li><a href="./transaction.php">Transaction API</a></li>
-            <li><a href="./3DSecure.php">3DSecure API</a></li>
+            <li><a href="./start-browser-payment.php">Browser Payment API</a></li>
         </ul>
     </body>
 </html>
