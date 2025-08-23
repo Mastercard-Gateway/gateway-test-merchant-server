@@ -71,7 +71,7 @@ if (intval($apiVersion) < 39) {
 }
 
 // build api endpoint url
-$gatewayUrl = "https://${prefix}.gateway.mastercard.com/api/rest/version/${apiVersion}/merchant/${merchantId}";
+$gatewayUrl = "https://{$prefix}.gateway.mastercard.com/api/rest/version/{$apiVersion}/merchant/{$merchantId}";
 
 // parse query string
 $query = array();
@@ -164,22 +164,14 @@ function outputJsonResponse($response) {
     exit;
 }
 
-function proxyCall($path, $payload = null, $method = null) {
+function proxyCall($path, $payload = null, $method = null, $returnOnly = false) {
     global $headers, $gatewayUrl;
 
     // Determine HTTP method
     $httpMethod = $method ?? $_SERVER['REQUEST_METHOD'];
 
     // Determine payload
-    if ($payload === null) {
-        $payload = getJsonPayload();
-    }
-
-    // Decode payload (if string), or use directly if already array
-    $decodedPayload = is_array($payload) ? $payload : json_decode($payload, true);
-
-    $isInitiateAuth = isset($decodedPayload['apiOperation']) &&
-                      strtoupper($decodedPayload['apiOperation']) === 'INITIATE_AUTHENTICATION';
+    $payload = $payload ?? getJsonPayload();
 
     // Ensure payload is a string before sending to doRequest
     $jsonPayload = is_string($payload) ? $payload : json_encode($payload);
@@ -187,11 +179,14 @@ function proxyCall($path, $payload = null, $method = null) {
     // Perform gateway request
     $response = doRequest($gatewayUrl . $path, $httpMethod, $jsonPayload, $headers);
 
-    if ($isInitiateAuth) {
-        // do NOT exit, return response for further steps
-        return decodeResponse($response);
+    // Decode once for consistent handling
+    $decodedResponse = decodeResponse($response);
+
+    // Decide what to do based on context
+    if ($returnOnly) {
+        return $decodedResponse;
     }
 
-    // default: output and exit
+    // Otherwise, output and exit
     outputJsonResponse($response);
 }
