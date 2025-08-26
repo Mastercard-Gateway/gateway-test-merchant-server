@@ -70,7 +70,7 @@ if (intercept('PUT')) {
       error_log("Step 1: Initiate Authentication");
       error_log("Payload: " . json_encode($initPayload));
 
-      $initiateResponse = proxyCall($apiBasePath, $initPayload, 'PUT');
+      $initiateResponse = proxyCall($apiBasePath, $initPayload, 'PUT', true);
       error_log("DEBUG: initiateResponse: " . json_encode($initiateResponse));
 
       $iaData = $initiateResponse['gatewayResponse'] ?? $initiateResponse;
@@ -83,6 +83,36 @@ if (intercept('PUT')) {
               'initiateResult' => $initiateResponse
           ]);
           exit;
+      }
+
+      $recommendation = $iaData['response']['gatewayRecommendation'] ?? null;
+      error_log("Recommendation: " . json_encode($recommendation));
+
+      $status = $iaData['transaction']['authenticationStatus'] ?? null;
+      error_log("Authentication Status: " . json_encode($status));
+
+      if (isset($recommendation)) {
+        switch($recommendation) {
+          case 'PROCEED':
+            $strippedStatus = preg_replace('/^AUTHENTICATION_/', '', $status);
+            error_log("Stripped Status: " . json_encode($strippedStatus));
+
+            switch ($strippedStatus) {
+              case 'AVAILABLE':
+                break;
+              default:
+                echo json_encode($iaData);
+                exit;
+            }
+            break;
+
+          default:
+          echo json_encode($iaData);
+          exit;
+        }
+      } else {
+        echo json_encode($iaData);
+        exit;
       }
 
       // === Step 2: Build 3DS2 Transaction (noop) ===
@@ -127,14 +157,13 @@ if (intercept('PUT')) {
 
       error_log("Payload for AUTHENTICATE_PAYER: " . json_encode($authPayload));
 
-      $authenticateResponse = proxyCall($apiBasePath, $authPayload, 'PUT');
+      $authenticateResponse = proxyCall($apiBasePath, $authPayload, 'PUT', true);
       error_log("DEBUG: authenticateResponse: " . json_encode($authenticateResponse));
 
-      $apData = $authenticateResponse['gatewayResponse'] ?? null;
-
       // === Step 4: Return Result ===
+      error_log("Step 4: Return Result");
       echo json_encode($authenticateResponse);
-
+      exit;
   } catch (Exception $e) {
       http_response_code(500);
       error_log("EXCEPTION: " . $e->getMessage());
