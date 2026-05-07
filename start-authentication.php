@@ -151,7 +151,7 @@ if (intercept('PUT')) {
           'apiOperation' => 'AUTHENTICATE_PAYER',
           'device' => $devicePayload,
           'authentication' => [
-                    'redirectResponseUrl' => "https://francophone-leaf-52430-c8565a556f27.herokuapp.com/authenticate-payer-callback.php?order={$orderId}&transaction={$transactionId}"
+                    'redirectResponseUrl' => "https://mpgs-merchant-server.onrender.com/authenticate-payer-callback.php?order={$orderId}&transaction={$transactionId}"
           ]
       ];
 
