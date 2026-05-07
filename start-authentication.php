@@ -122,7 +122,7 @@ if (intercept('PUT')) {
       error_log("Step 3: Authenticate Payer");
 
       if (isset($devicePayload)) {
-        $devicePayload['ipAddress'] = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        $devicePayload['ipAddress'] = '127.0.0.1';
       } else {
         $devicePayload = [ // Fallback if $devicePayload not available
               'browser' => 'MOZILLA',
@@ -136,7 +136,7 @@ if (intercept('PUT')) {
                   'screenWidth' => 480,
                   'timeZone' => 273
               ],
-              'ipAddress' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1'
+              'ipAddress' => '127.0.0.1'
             ];
       }
 
